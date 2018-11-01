@@ -1,0 +1,26 @@
+version: '2.2'
+services:
+
+  akka-crud-service:
+    image: akka-crud-service:0.1.0-SNAPSHOT
+    container_name: akka-crud-service
+    mem_limit: 2g
+    environment:
+      APP_CONFIG_PATH: /opt/conf/application.conf
+    volumes:
+      - ./config/application.conf:/opt/conf/application.conf
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
+
+  postgres:
+    restart: always
+    image: postgres:10.4
+    container_name: akka-crud-service-postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=trips
+      - POSTGRES_PASSWORD=trips
+      - POSTGRES_DB=trips
