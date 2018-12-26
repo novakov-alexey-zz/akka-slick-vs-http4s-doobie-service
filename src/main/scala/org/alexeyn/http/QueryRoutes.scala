@@ -11,11 +11,11 @@ import org.alexeyn.{JsonCodes, TripService}
 
 import scala.concurrent.Future
 
-object QueryRoutes extends JsonCodes with CORSHandler {
+object QueryRoutes extends JsonCodes with ApiV1 with CORSHandler {
   def routes(service: TripService[Future])(implicit system: ActorSystem): Route = {
     lazy val log = Logging(system, QueryRoutes.getClass)
 
-    val route = pathPrefix("api" / "v1" / "trips") {
+    val route = apiPrefix {
       concat(
         pathEndOrSingleSlash {
           get {
