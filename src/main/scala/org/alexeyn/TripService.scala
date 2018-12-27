@@ -13,9 +13,12 @@ class TripService[F[_]](dao: Dao[Trip, F])(implicit F: Functor[F]) {
       .map(s => dao.sortingFields.find(_ == s).toRight(s"Unknown sort field $s"))
       .getOrElse(Right(DefaultSortField))
 
+    val pageN = page.getOrElse(DefaultPage)
+    val size = pageSize.getOrElse(DefaultPageSize)
+
     sortBy.map { sort =>
       dao
-        .selectAll(page.getOrElse(DefaultPage), pageSize.getOrElse(DefaultPageSize), sort)
+        .selectAll(pageN, size, sort)
         .map(Trips)
     }
   }

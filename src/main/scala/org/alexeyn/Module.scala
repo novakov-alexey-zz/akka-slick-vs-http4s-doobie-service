@@ -4,14 +4,14 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Directives.concat
 import akka.http.scaladsl.server.Route
 import cats.instances.future._
-import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.config.Config
 import com.typesafe.scalalogging.StrictLogging
 import org.alexeyn.http.{CommandRoutes, QueryRoutes}
 import slick.jdbc.PostgresProfile.api._
 
 import scala.concurrent.ExecutionContext
 
-class Module(createSchema: Boolean = true, cfg: Config = ConfigFactory.load())(
+class Module(cfg: Config, createSchema: Boolean = true)(
   implicit system: ActorSystem,
   executionContext: ExecutionContext
 ) extends StrictLogging {

@@ -40,7 +40,7 @@ class E2ETest
       .withFallback(ConfigFactory.load())
   )
 
-  lazy val mod = new Module(createSchema = false, cfg)
+  lazy val mod = new Module(cfg, createSchema = false)
 
   before {
     Await.ready(mod.db.run(mod.dao.dropSchema()), 10.seconds)

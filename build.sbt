@@ -1,18 +1,18 @@
-lazy val akkaHttpVersion = "10.1.5"
-lazy val akkaVersion = "2.5.17"
+lazy val akkaHttpVersion = "10.1.6"
+lazy val akkaVersion = "2.5.19"
 lazy val slickVersion = "3.2.3"
+lazy val upickleVersion = "0.7.1"
 
 lazy val root = (project in file("."))
   .settings(
-    inThisBuild(List(organization := "org.alexeyn", scalaVersion := "2.12.7")),
+    inThisBuild(List(organization := "org.alexeyn", scalaVersion := "2.12.8")),
     name := "akka-crud-service",
     libraryDependencies ++= Seq(
-      "com.github.pureconfig" %% "pureconfig" % "0.9.1",
       "org.typelevel" %% "cats-core" % "1.4.0",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0",
       "ch.qos.logback" % "logback-classic" % "1.2.3",
       "org.postgresql" % "postgresql" % "9.4-1203-jdbc4",
-      "com.github.pureconfig" %% "pureconfig" % "0.9.1",
+      "com.github.pureconfig" %% "pureconfig" % "0.10.1",
       "com.typesafe.slick" %% "slick" % slickVersion,
       "com.typesafe.slick" %% "slick-hikaricp" % slickVersion,
       "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
@@ -21,8 +21,8 @@ lazy val root = (project in file("."))
       "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test,
       "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,
       "de.heikoseeberger" %% "akka-http-upickle" % "1.23.0",
-      "com.lihaoyi" %% "upickle" % "0.6.7",
-      "com.lihaoyi" %% "ujson" % "0.6.7",
+      "com.lihaoyi" %% "upickle" % upickleVersion,
+      "com.lihaoyi" %% "ujson" % upickleVersion,
       "org.scalatest" %% "scalatest" % "3.0.5" % Test,
       "com.dimafeng" %% "testcontainers-scala" % "0.20.0" % Test,
       "org.testcontainers" % "postgresql" % "1.9.1" % Test
