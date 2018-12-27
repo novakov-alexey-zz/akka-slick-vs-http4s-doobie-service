@@ -6,11 +6,12 @@ import akka.http.scaladsl.testkit.ScalatestRouteTest
 import cats.instances.future._
 import org.alexeyn.TestData._
 import org.alexeyn.http.CommandRoutes
+import org.alexeyn.json.JsonCodes
 import org.scalatest.{Matchers, WordSpec}
 
 import scala.concurrent.Future
 
-class CommandRoutesTest extends WordSpec with Matchers with ScalatestRouteTest with SprayJsonCodes {
+class CommandRoutesTest extends WordSpec with Matchers with ScalatestRouteTest with JsonCodes {
 
   private val mockDao = createMockDao
   private val service = new TripService[Future](mockDao)

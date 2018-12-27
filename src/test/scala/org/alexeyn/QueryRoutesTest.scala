@@ -4,14 +4,15 @@ import akka.http.scaladsl.model.{ContentTypes, StatusCodes}
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import cats.instances.future._
+import org.alexeyn.RequestsSupport._
 import org.alexeyn.TestData._
 import org.alexeyn.http.QueryRoutes
+import org.alexeyn.json.JsonCodes
 import org.scalatest.{Matchers, WordSpec}
-import RequestsSupport._
 
 import scala.concurrent.Future
 
-class QueryRoutesTest extends WordSpec with Matchers with ScalatestRouteTest with SprayJsonCodes {
+class QueryRoutesTest extends WordSpec with Matchers with ScalatestRouteTest with JsonCodes {
   private val mockDao = createMockDao
   private val service = new TripService[Future](mockDao)
   val routes: Route = QueryRoutes.routes(service)
@@ -33,9 +34,9 @@ class QueryRoutesTest extends WordSpec with Matchers with ScalatestRouteTest wit
 
       request ~> routes ~> check {
         commonChecks
-        val trips = entityAs[Trips].trips
-        trips.length should ===(3)
-        trips.map(_.id) should ===(Seq(1, 2, 3))
+        val all = entityAs[Trips].trips
+        all.length should ===(3)
+        all.map(_.id) should ===(Seq(1, 2, 3))
       }
     }
   }

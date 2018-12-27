@@ -8,11 +8,11 @@ import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.PathDirectives.path
 import akka.http.scaladsl.server.directives.RouteDirectives.complete
 import org.alexeyn._
-import spray.json._
+import org.alexeyn.json.{GenericJsonWriter, JsonCodes}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object CommandRoutes extends SprayJsonCodes with ApiV1 with CORSHandler {
+object CommandRoutes extends JsonCodes with ApiV1 with CORSHandler {
 
   def routes(service: TripService[Future])(implicit ec: ExecutionContext, system: ActorSystem): Route = {
     lazy val log = Logging(system, CommandRoutes.getClass)
@@ -58,12 +58,12 @@ object CommandRoutes extends SprayJsonCodes with ApiV1 with CORSHandler {
   private def toCommandResponse[T](
     count: Either[String, Future[Int]],
     f: Int => T
-  )(implicit ev: JsonWriter[T], ec: ExecutionContext): Future[HttpResponse] = {
+  )(implicit ev: GenericJsonWriter[T], ec: ExecutionContext): Future[HttpResponse] = {
 
     count match {
       case Right(c) =>
         c.map(i => {
-          val entity = HttpEntity(ContentTypes.`application/json`, f(i).toJson.toString())
+          val entity = HttpEntity(ContentTypes.`application/json`, ev.toJsonString(f(i)))
           HttpResponse(StatusCodes.OK, entity = entity)
         })
       case Left(e) =>

@@ -1,9 +1,10 @@
-package org.alexeyn
+package org.alexeyn.json
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+import org.alexeyn.{CommandResult, Trip, Trips, Vehicle}
 import spray.json.{DefaultJsonProtocol, DeserializationException, JsString, JsValue, JsonFormat, RootJsonFormat}
 
 trait SprayJsonCodes extends SprayJsonSupport with DefaultJsonProtocol {
@@ -36,4 +37,11 @@ trait SprayJsonCodes extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val tripFormat: RootJsonFormat[Trip] = jsonFormat7(Trip)
   implicit val tripsFormat: RootJsonFormat[Trips] = jsonFormat1(Trips)
   implicit val commandResultFormat: RootJsonFormat[CommandResult] = jsonFormat1(CommandResult)
+
+  def genericJsonWriter[T: RootJsonFormat]: GenericJsonWriter[T] =
+    (e: T) => spray.json.jsonWriter[T].write(e).toString()
+
+  implicit val genericTrip: GenericJsonWriter[Trip] = genericJsonWriter[Trip]
+  implicit val genericTrips: GenericJsonWriter[Trips] = genericJsonWriter[Trips]
+  implicit val genericCommandResult: GenericJsonWriter[CommandResult] = genericJsonWriter[CommandResult]
 }

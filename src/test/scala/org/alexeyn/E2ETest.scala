@@ -9,6 +9,7 @@ import com.dimafeng.testcontainers.{ForAllTestContainer, PostgreSQLContainer}
 import com.typesafe.config.{Config, ConfigFactory}
 import org.alexeyn.RequestsSupport._
 import org.alexeyn.TestData._
+import org.alexeyn.json.JsonCodes
 import org.scalatest.{BeforeAndAfter, Matchers, WordSpec}
 
 import scala.collection.JavaConverters._
@@ -19,7 +20,7 @@ class E2ETest
     extends WordSpec
     with Matchers
     with ScalatestRouteTest
-    with SprayJsonCodes
+    with JsonCodes
     with BeforeAndAfter
     with ForAllTestContainer {
 
@@ -34,7 +35,8 @@ class E2ETest
           "user" -> container.username,
           "password" -> container.password
         ).asJava
-      ).atKey("storage")
+      )
+      .atKey("storage")
       .withFallback(ConfigFactory.load())
   )
 
@@ -45,12 +47,12 @@ class E2ETest
     Await.ready(mod.dao.createSchema(), 10.seconds)
   }
 
-  "CarAds service" should {
-    "insert new carAds" in {
+  "Trips service" should {
+    "insert new trip" in {
       insertData()
     }
 
-    "select carAds sorted by any field" in {
+    "select trips sorted by any field" in {
       insertData()
 
       checkSorting("id", _.id)
@@ -163,7 +165,7 @@ class E2ETest
   }
 
   private def commonChecks = {
-    println(s"*** Response body: ${entityAs[String]}")
+    if (StatusCodes.OK !== status) println(s"*** Response body: $responseEntity")
 
     status should ===(StatusCodes.OK)
     contentType should ===(ContentTypes.`application/json`)
