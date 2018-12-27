@@ -19,7 +19,7 @@ class CommandRoutesTest extends WordSpec with Matchers with ScalatestRouteTest w
   val routes: Route = CommandRoutes.routes(service)
 
   "CommandRoutes" should {
-    "insert new carAd and return its id" in {
+    "insert new trip and return its id" in {
       val request = RequestsSupport.insertRequest(berlin)
 
       request ~> routes ~> check {
@@ -29,7 +29,7 @@ class CommandRoutesTest extends WordSpec with Matchers with ScalatestRouteTest w
       }
     }
 
-    "update existing carAd and return count" in {
+    "update existing trip and return count" in {
       val request = RequestsSupport.insertRequest(berlin)
 
       request ~> routes ~> check {
@@ -39,7 +39,7 @@ class CommandRoutesTest extends WordSpec with Matchers with ScalatestRouteTest w
       }
     }
 
-    "delete existing carAd and return count" in {
+    "delete existing trip and return count" in {
       val request = RequestsSupport.deleteRequest(adId)
 
       request ~> routes ~> check {
@@ -49,7 +49,15 @@ class CommandRoutesTest extends WordSpec with Matchers with ScalatestRouteTest w
       }
     }
 
-    "reject new car creation when mileage is set for a new car" in {
+    "reject new trip creation when endDate is empty for a completed trip" in {
+      val request = RequestsSupport.insertRequest(berlin.copy(completed = true, endDate = None))
+
+      request ~> routes ~> check {
+        status should ===(StatusCodes.PreconditionFailed)
+      }
+    }
+
+    "reject new trip creation when distance is empty for a completed trip" in {
       val request = RequestsSupport.insertRequest(berlin.copy(completed = true, distance = None))
 
       request ~> routes ~> check {
@@ -57,15 +65,7 @@ class CommandRoutesTest extends WordSpec with Matchers with ScalatestRouteTest w
       }
     }
 
-    "reject new car creation when firstRegistration is set for a new car" in {
-      val request = RequestsSupport.insertRequest(berlin.copy(completed = true, distance = None))
-
-      request ~> routes ~> check {
-        status should ===(StatusCodes.PreconditionFailed)
-      }
-    }
-
-    "reject existing car modification when mileage is set for a new car" in {
+    "reject existing trip modification when distance is empty for a completed trip" in {
       val request = RequestsSupport.updateRequest(berlin.copy(completed = true, distance = None), adId)
 
       request ~> routes ~> check {
@@ -73,8 +73,8 @@ class CommandRoutesTest extends WordSpec with Matchers with ScalatestRouteTest w
       }
     }
 
-    "reject existing car modification when firstRegistration is set for a new car" in {
-      val request = RequestsSupport.updateRequest(berlin.copy(completed = true, distance = None), adId)
+    "reject existing trip modification when endDate is empty for a completed trip" in {
+      val request = RequestsSupport.updateRequest(berlin.copy(completed = true, endDate = None), adId)
 
       request ~> routes ~> check {
         status should ===(StatusCodes.PreconditionFailed)
