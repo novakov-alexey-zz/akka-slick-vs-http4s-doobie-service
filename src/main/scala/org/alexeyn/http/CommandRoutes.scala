@@ -12,7 +12,7 @@ import spray.json._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object CommandRoutes extends JsonCodes with ApiV1 with CORSHandler {
+object CommandRoutes extends SprayJsonCodes with ApiV1 with CORSHandler {
 
   def routes(service: TripService[Future])(implicit ec: ExecutionContext, system: ActorSystem): Route = {
     lazy val log = Logging(system, CommandRoutes.getClass)

@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json.{DefaultJsonProtocol, DeserializationException, JsString, JsValue, JsonFormat, RootJsonFormat}
 
-trait JsonCodes extends SprayJsonSupport with DefaultJsonProtocol {
+trait SprayJsonCodes extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val vehicle: RootJsonFormat[Vehicle.Value] = enumFormat(Vehicle)
 
   implicit val localDate: JsonFormat[LocalDate] =
@@ -33,7 +33,7 @@ trait JsonCodes extends SprayJsonSupport with DefaultJsonProtocol {
       }
     }
 
-  implicit val trip: RootJsonFormat[Trip] = jsonFormat7(Trip)
-  implicit val trips: RootJsonFormat[Trips] = jsonFormat1(Trips)
-  implicit val commandResult: RootJsonFormat[CommandResult] = jsonFormat1(CommandResult)
+  implicit val tripFormat: RootJsonFormat[Trip] = jsonFormat7(Trip)
+  implicit val tripsFormat: RootJsonFormat[Trips] = jsonFormat1(Trips)
+  implicit val commandResultFormat: RootJsonFormat[CommandResult] = jsonFormat1(CommandResult)
 }

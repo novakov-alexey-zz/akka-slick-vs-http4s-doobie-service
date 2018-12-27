@@ -7,11 +7,11 @@ import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.MethodDirectives.get
 import akka.http.scaladsl.server.directives.PathDirectives.path
 import akka.http.scaladsl.server.directives.RouteDirectives.complete
-import org.alexeyn.{JsonCodes, TripService}
+import org.alexeyn.{SprayJsonCodes, TripService}
 
 import scala.concurrent.Future
 
-object QueryRoutes extends JsonCodes with ApiV1 with CORSHandler {
+object QueryRoutes extends SprayJsonCodes with ApiV1 with CORSHandler {
   def routes(service: TripService[Future])(implicit system: ActorSystem): Route = {
     lazy val log = Logging(system, QueryRoutes.getClass)
 
