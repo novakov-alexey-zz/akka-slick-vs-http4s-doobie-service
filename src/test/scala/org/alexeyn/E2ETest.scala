@@ -37,7 +37,6 @@ class E2ETest
         ).asJava
       )
       .atKey("storage")
-      .withFallback(ConfigFactory.load())
   )
 
   lazy val mod = new Module(cfg, createSchema = false)

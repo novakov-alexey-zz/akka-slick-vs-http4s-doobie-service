@@ -12,8 +12,8 @@ import scala.concurrent.Future
 
 class CommandRoutesTest extends WordSpec with Matchers with ScalatestRouteTest with JsonCodes {
 
-  private val mockDao = createMockDao
-  private val service = new TripService[Future](mockDao)
+  private val stubDao = createStubDao
+  private val service = new TripService[Future](stubDao)
   private val routes = CommandRoutes.routes(service)
 
   "CommandRoutes" should {
@@ -85,7 +85,7 @@ class CommandRoutesTest extends WordSpec with Matchers with ScalatestRouteTest w
     contentType should ===(ContentTypes.`application/json`)
   }
 
-  private def createMockDao = {
+  private def createStubDao = {
     new Dao[Trip, Future] {
       override def createSchema(): Future[Unit] = Future.successful()
       override def insert(row: Trip): Future[Int] = Future.successful(adId)

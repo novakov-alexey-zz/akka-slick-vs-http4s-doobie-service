@@ -12,8 +12,8 @@ import org.scalatest.{Matchers, WordSpec}
 import scala.concurrent.Future
 
 class QueryRoutesTest extends WordSpec with Matchers with ScalatestRouteTest with JsonCodes {
-  private val mockDao = createMockDao
-  private val service = new TripService[Future](mockDao)
+  private val stubDao = createStubDao
+  private val service = new TripService[Future](stubDao)
   private val routes = QueryRoutes.routes(service)
 
   "QueryRoutes" should {
@@ -45,7 +45,7 @@ class QueryRoutesTest extends WordSpec with Matchers with ScalatestRouteTest wit
     contentType should ===(ContentTypes.`application/json`)
   }
 
-  private def createMockDao = {
+  private def createStubDao = {
     new Dao[Trip, Future] {
       override def createSchema(): Future[Unit] = Future.successful()
       override def insert(row: Trip): Future[Int] = Future.successful(1)
