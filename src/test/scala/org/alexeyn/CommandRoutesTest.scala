@@ -1,7 +1,6 @@
 package org.alexeyn
 
 import akka.http.scaladsl.model._
-import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import cats.instances.future._
 import org.alexeyn.TestData._
@@ -15,8 +14,7 @@ class CommandRoutesTest extends WordSpec with Matchers with ScalatestRouteTest w
 
   private val mockDao = createMockDao
   private val service = new TripService[Future](mockDao)
-
-  val routes: Route = CommandRoutes.routes(service)
+  private val routes = CommandRoutes.routes(service)
 
   "CommandRoutes" should {
     "insert new trip and return its id" in {

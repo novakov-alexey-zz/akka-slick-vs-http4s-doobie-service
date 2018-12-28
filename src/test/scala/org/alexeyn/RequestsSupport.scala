@@ -4,27 +4,27 @@ import akka.http.scaladsl.model.{HttpEntity, HttpMethods, HttpRequest, MediaType
 import org.alexeyn.json.GenericJsonWriter
 
 object RequestsSupport {
+  private val apiPrefix = "/api/v1/trips"
 
   def insertRequest[T](e: T)(implicit w: GenericJsonWriter[T]): HttpRequest = {
     val entity = HttpEntity(MediaTypes.`application/json`, w.toJsonString(e))
-    HttpRequest(uri = "/api/v1/trips", method = HttpMethods.POST, entity = entity)
+    HttpRequest(uri = apiPrefix, method = HttpMethods.POST, entity = entity)
   }
 
   def selectAllRequest(): HttpRequest =
-    HttpRequest(uri = "/api/v1/trips")
-  
+    HttpRequest(uri = apiPrefix)
+
   def selectAllRequest(sort: String): HttpRequest =
-    HttpRequest(uri = s"/api/v1/trips?sort=$sort")
+    HttpRequest(uri = s"$apiPrefix?sort=$sort")
 
   def selectByRequest(id: Int): HttpRequest =
-    HttpRequest(uri = s"/api/v1/trips/$id")
+    HttpRequest(uri = s"$apiPrefix/$id")
 
   def updateRequest[T](e: T, id: Int)(implicit w: GenericJsonWriter[T]): HttpRequest = {
     val entity = HttpEntity(MediaTypes.`application/json`, w.toJsonString(e))
-    HttpRequest(uri = s"/api/v1/trips/$id", method = HttpMethods.PUT, entity = entity)
+    HttpRequest(uri = s"$apiPrefix/$id", method = HttpMethods.PUT, entity = entity)
   }
 
   def deleteRequest[T](id: Int): HttpRequest =
-    HttpRequest(uri = s"/api/v1/trips/$id", method = HttpMethods.DELETE)
-
+    HttpRequest(uri = s"$apiPrefix/$id", method = HttpMethods.DELETE)
 }

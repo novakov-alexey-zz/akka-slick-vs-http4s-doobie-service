@@ -87,16 +87,14 @@ class E2ETest
 
   }
 
-  private def deleteData(): Unit = {
-    mockData.indices.foreach(i => deleteAndCheck(i + 1))
-  }
+  private def deleteData(): Unit =
+    mockData.indices.foreach(id => deleteAndCheck(id + 1))
 
-  private def insertData(): Unit = {
-    mockData.foreach { c =>
-      val insert = insertRequest(c)
+  private def insertData(): Unit =
+    mockData.foreach { t =>
+      val insert = insertRequest(t)
       insertAndCheck(insert)
     }
-  }
 
   private def deleteAndCheck(id: Int) = {
     val delete = deleteRequest(id)

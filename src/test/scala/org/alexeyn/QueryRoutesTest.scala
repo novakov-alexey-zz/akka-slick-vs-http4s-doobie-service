@@ -1,7 +1,6 @@
 package org.alexeyn
 
 import akka.http.scaladsl.model.{ContentTypes, StatusCodes}
-import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import cats.instances.future._
 import org.alexeyn.RequestsSupport._
@@ -15,7 +14,7 @@ import scala.concurrent.Future
 class QueryRoutesTest extends WordSpec with Matchers with ScalatestRouteTest with JsonCodes {
   private val mockDao = createMockDao
   private val service = new TripService[Future](mockDao)
-  val routes: Route = QueryRoutes.routes(service)
+  private val routes = QueryRoutes.routes(service)
 
   "QueryRoutes" should {
     "return all trips sorted by some parameter" in {
