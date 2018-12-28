@@ -9,6 +9,7 @@ services:
       APP_CONFIG_PATH: /opt/conf/application.conf
     volumes:
       - ./config/application.conf:/opt/conf/application.conf
+      - ./config/logback.xml:/opt/conf/logback.xml
     ports:
       - 8080:8080
     depends_on:
