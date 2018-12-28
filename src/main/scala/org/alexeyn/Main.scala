@@ -15,6 +15,8 @@ object Main extends App with StrictLogging {
   implicit val executionContext: ExecutionContext = system.dispatcher
 
   val (server, cfg) = AppConfig.load.fold(e => sys.error(e.toString), identity)
+  logger.info(s"Server config: $server")
+
   val mod = new Module(cfg)
   val serverBinding = Http().bindAndHandle(mod.routes, server.host, server.port)
 

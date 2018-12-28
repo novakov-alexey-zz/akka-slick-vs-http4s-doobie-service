@@ -1,9 +1,8 @@
 package org.alexeyn.http
 
-import akka.http.scaladsl.server.Directive
-import akka.http.scaladsl.server.Directives.pathPrefix
-import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.Directives.{pathPrefix, _}
+import akka.http.scaladsl.server.Route
 
 trait ApiV1 {
-  def apiPrefix: Directive[Unit] = pathPrefix("api" / "v1" / "trips")
+  def apiPrefix(r: Route): Route = pathPrefix("api" / "v1" / "trips")(r)
 }

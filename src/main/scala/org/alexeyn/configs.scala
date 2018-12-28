@@ -18,6 +18,6 @@ object AppConfig extends StrictLogging {
   def load: Either[ConfigReaderFailures, (Server, Config)] = {
     val config = ConfigFactory.parseFile(new File(path), parseOptions).resolve()
     logger.debug("cfg: {}", config)
-    loadConfig[Server](config).map(_ -> config)
+    loadConfig[Server](config, "server").map(_ -> config)
   }
 }
