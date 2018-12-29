@@ -11,10 +11,8 @@ import slick.jdbc.PostgresProfile.api._
 
 import scala.concurrent.ExecutionContext
 
-class Module(cfg: Config, createSchema: Boolean = true)(
-  implicit system: ActorSystem,
-  executionContext: ExecutionContext
-) extends StrictLogging {
+class Module(cfg: Config, createSchema: Boolean = true)(implicit system: ActorSystem, ec: ExecutionContext)
+    extends StrictLogging {
 
   val db = Database.forConfig("storage", cfg)
   val dao = new TripDao(db)
