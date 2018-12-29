@@ -3,8 +3,8 @@ package org.alexeyn
 import java.time.LocalDate
 
 object TestData {
-  val adId = 1
-  val berlin = Trip(adId, "berlin", Vehicle.Car, 20000, completed = false, Some(20000), Some(LocalDate.of(2010, 4, 22)))
+  val tripId = 1
+  val berlin = Trip(tripId, "berlin", Vehicle.Car, 20000, completed = false, Some(20000), Some(LocalDate.of(2010, 4, 22)))
 
   val mockData: IndexedSeq[Trip] =
     IndexedSeq(

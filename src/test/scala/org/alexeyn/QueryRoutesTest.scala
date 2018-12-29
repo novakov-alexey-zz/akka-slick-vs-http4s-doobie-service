@@ -6,12 +6,12 @@ import cats.instances.future._
 import org.alexeyn.RequestsSupport._
 import org.alexeyn.TestData._
 import org.alexeyn.http.QueryRoutes
-import org.alexeyn.json.JsonCodes
+import org.alexeyn.json.SprayJsonCodes._
 import org.scalatest.{Matchers, WordSpec}
 
 import scala.concurrent.Future
 
-class QueryRoutesTest extends WordSpec with Matchers with ScalatestRouteTest with JsonCodes {
+class QueryRoutesTest extends WordSpec with Matchers with ScalatestRouteTest {
   private val stubDao = createStubDao
   private val service = new TripService[Future](stubDao)
   private val routes = QueryRoutes.routes(service)

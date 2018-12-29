@@ -1,7 +1,7 @@
 lazy val akkaHttpVersion = "10.1.6"
 lazy val akkaVersion = "2.5.19"
 lazy val slickVersion = "3.2.3"
-lazy val upickleVersion = "0.7.1"
+lazy val upickleVersion = "0.6.7"
 
 lazy val root = (project in file("."))
   .settings(
@@ -25,8 +25,10 @@ lazy val root = (project in file("."))
       "com.lihaoyi" %% "ujson" % upickleVersion,
       "org.scalatest" %% "scalatest" % "3.0.5" % Test,
       "com.dimafeng" %% "testcontainers-scala" % "0.20.0" % Test,
-      "org.testcontainers" % "postgresql" % "1.9.1" % Test
+      "org.testcontainers" % "postgresql" % "1.9.1" % Test,
+      "com.storm-enroute" %% "scalameter-core" % "0.10.1" % Test
     ),
-    dockerBaseImage := "openjdk:8-jre-alpine"
+    dockerBaseImage := "openjdk:8-jre-alpine",
+    Test / fork := true
   )
   .enablePlugins(JavaAppPackaging, AshScriptPlugin)

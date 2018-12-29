@@ -9,7 +9,7 @@ import com.dimafeng.testcontainers.{ForAllTestContainer, PostgreSQLContainer}
 import com.typesafe.config.{Config, ConfigFactory}
 import org.alexeyn.RequestsSupport._
 import org.alexeyn.TestData._
-import org.alexeyn.json.JsonCodes
+import org.alexeyn.json.SprayJsonCodes._
 import org.scalatest.{BeforeAndAfter, Matchers, WordSpec}
 
 import scala.collection.JavaConverters._
@@ -20,7 +20,6 @@ class E2ETest
     extends WordSpec
     with Matchers
     with ScalatestRouteTest
-    with JsonCodes
     with BeforeAndAfter
     with ForAllTestContainer {
 

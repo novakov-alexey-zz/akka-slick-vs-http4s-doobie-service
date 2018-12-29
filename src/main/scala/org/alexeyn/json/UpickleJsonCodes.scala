@@ -20,9 +20,9 @@ trait UpickleJsonCodes extends UpickleSupport {
       .readwriter[String]
       .bimap[LocalDate](d => d.format(DateTimeFormatter.ISO_LOCAL_DATE), str => LocalDate.parse(str))
 
-  implicit def tripRW: ReadWriter[Trip] = macroRW
-  implicit def tripsRW: ReadWriter[Trips] = macroRW
-  implicit def commandResultRW: ReadWriter[CommandResult] = macroRW
+  implicit val tripRW: ReadWriter[Trip] = macroRW
+  implicit val tripsRW: ReadWriter[Trips] = macroRW
+  implicit val commandResultRW: ReadWriter[CommandResult] = macroRW
 
   def genericJsonWriter[T: Writer]: GenericJsonWriter[T] = (e: T) => write(e)
 
@@ -30,3 +30,5 @@ trait UpickleJsonCodes extends UpickleSupport {
   implicit val genericTrips: GenericJsonWriter[Trips] = genericJsonWriter[Trips]
   implicit val genericCommandResult: GenericJsonWriter[CommandResult] = genericJsonWriter[CommandResult]
 }
+
+object UpickleJsonCodes extends UpickleJsonCodes

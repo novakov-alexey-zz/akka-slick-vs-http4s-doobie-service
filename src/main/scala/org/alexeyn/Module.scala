@@ -2,11 +2,11 @@ package org.alexeyn
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Directives.concat
-import akka.http.scaladsl.server.Route
 import cats.instances.future._
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.StrictLogging
 import org.alexeyn.http.{CommandRoutes, QueryRoutes}
+import org.alexeyn.json.SprayJsonCodes._
 import slick.jdbc.PostgresProfile.api._
 
 import scala.concurrent.ExecutionContext
@@ -19,7 +19,7 @@ class Module(cfg: Config, createSchema: Boolean = true)(
   val db = Database.forConfig("storage", cfg)
   val dao = new TripDao(db)
   val service = new TripService(dao)
-  val routes: Route = concat(QueryRoutes.routes(service), CommandRoutes.routes(service))
+  val routes = concat(QueryRoutes.routes(service), CommandRoutes.routes(service))
 
   if (createSchema) _createSchema()
 

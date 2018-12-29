@@ -5,12 +5,12 @@ import akka.http.scaladsl.testkit.ScalatestRouteTest
 import cats.instances.future._
 import org.alexeyn.TestData._
 import org.alexeyn.http.CommandRoutes
-import org.alexeyn.json.JsonCodes
+import org.alexeyn.json.SprayJsonCodes._
 import org.scalatest.{Matchers, WordSpec}
 
 import scala.concurrent.Future
 
-class CommandRoutesTest extends WordSpec with Matchers with ScalatestRouteTest with JsonCodes {
+class CommandRoutesTest extends WordSpec with Matchers with ScalatestRouteTest {
 
   private val stubDao = createStubDao
   private val service = new TripService[Future](stubDao)
@@ -28,7 +28,7 @@ class CommandRoutesTest extends WordSpec with Matchers with ScalatestRouteTest w
     }
 
     "update existing trip and return count" in {
-      val request = RequestsSupport.insertRequest(berlin)
+      val request = RequestsSupport.updateRequest(berlin, tripId)
 
       request ~> routes ~> check {
         commonChecks
@@ -38,7 +38,7 @@ class CommandRoutesTest extends WordSpec with Matchers with ScalatestRouteTest w
     }
 
     "delete existing trip and return count" in {
-      val request = RequestsSupport.deleteRequest(adId)
+      val request = RequestsSupport.deleteRequest(tripId)
 
       request ~> routes ~> check {
         commonChecks
@@ -64,7 +64,7 @@ class CommandRoutesTest extends WordSpec with Matchers with ScalatestRouteTest w
     }
 
     "reject existing trip modification when distance is empty for a completed trip" in {
-      val request = RequestsSupport.updateRequest(berlin.copy(completed = true, distance = None), adId)
+      val request = RequestsSupport.updateRequest(berlin.copy(completed = true, distance = None), tripId)
 
       request ~> routes ~> check {
         status should ===(StatusCodes.PreconditionFailed)
@@ -72,7 +72,7 @@ class CommandRoutesTest extends WordSpec with Matchers with ScalatestRouteTest w
     }
 
     "reject existing trip modification when endDate is empty for a completed trip" in {
-      val request = RequestsSupport.updateRequest(berlin.copy(completed = true, endDate = None), adId)
+      val request = RequestsSupport.updateRequest(berlin.copy(completed = true, endDate = None), tripId)
 
       request ~> routes ~> check {
         status should ===(StatusCodes.PreconditionFailed)
@@ -88,11 +88,11 @@ class CommandRoutesTest extends WordSpec with Matchers with ScalatestRouteTest w
   private def createStubDao = {
     new Dao[Trip, Future] {
       override def createSchema(): Future[Unit] = Future.successful()
-      override def insert(row: Trip): Future[Int] = Future.successful(adId)
+      override def insert(row: Trip): Future[Int] = Future.successful(tripId)
       override def selectAll(page: Int, pageSize: Int, sort: String): Future[Seq[Trip]] = ???
       override def select(id: Int): Future[Option[Trip]] = ???
-      override def delete(id: Int): Future[Int] = Future.successful(adId)
-      override def update(id: Int, row: Trip): Future[Int] = Future.successful(adId)
+      override def delete(id: Int): Future[Int] = Future.successful(tripId)
+      override def update(id: Int, row: Trip): Future[Int] = Future.successful(tripId)
       override def sortingFields: Set[String] = ???
     }
   }

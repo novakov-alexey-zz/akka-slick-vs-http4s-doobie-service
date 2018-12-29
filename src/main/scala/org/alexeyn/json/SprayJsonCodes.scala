@@ -45,3 +45,5 @@ trait SprayJsonCodes extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val genericTrips: GenericJsonWriter[Trips] = genericJsonWriter[Trips]
   implicit val genericCommandResult: GenericJsonWriter[CommandResult] = genericJsonWriter[CommandResult]
 }
+
+object SprayJsonCodes extends SprayJsonCodes

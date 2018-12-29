@@ -2,19 +2,21 @@ package org.alexeyn.http
 
 import akka.actor.ActorSystem
 import akka.event.Logging
+import akka.http.scaladsl.marshalling.ToResponseMarshaller
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.MethodDirectives.get
 import akka.http.scaladsl.server.directives.PathDirectives.path
 import akka.http.scaladsl.server.directives.RouteDirectives.complete
-import org.alexeyn.TripService
-import org.alexeyn.json.JsonCodes
+import org.alexeyn.{Trip, TripService, Trips}
 
 import scala.concurrent.Future
 
-object QueryRoutes extends JsonCodes with ApiV1 with CORSHandler {
+object QueryRoutes extends ApiV1 with CORSHandler {
 
-  def routes(service: TripService[Future])(implicit system: ActorSystem): Route = {
+  def routes(
+    service: TripService[Future]
+  )(implicit system: ActorSystem, ts: ToResponseMarshaller[Trips], t: ToResponseMarshaller[Trip]): Route = {
     lazy val log = Logging(system, QueryRoutes.getClass)
 
     val route = apiPrefix {
