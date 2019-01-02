@@ -12,12 +12,15 @@ import org.alexeyn.{Trip, TripService, Trips}
 
 import scala.concurrent.Future
 
-object QueryRoutes extends ApiV1 with CORSHandler {
+class QueryRoutes(service: TripService[Future])(
+  implicit system: ActorSystem,
+  ts: ToResponseMarshaller[Trips],
+  t: ToResponseMarshaller[Trip]
+) extends ApiV1
+    with CORSHandler {
 
-  def routes(
-    service: TripService[Future]
-  )(implicit system: ActorSystem, ts: ToResponseMarshaller[Trips], t: ToResponseMarshaller[Trip]): Route = {
-    lazy val log = Logging(system, QueryRoutes.getClass)
+  def routes: Route = {
+    lazy val log = Logging(system, getClass)
 
     val route = apiPrefix {
       concat(

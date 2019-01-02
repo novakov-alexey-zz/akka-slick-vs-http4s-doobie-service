@@ -2,7 +2,8 @@ package org.alexeyn
 
 import akka.http.scaladsl.model.{ContentTypes, StatusCodes}
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import cats.instances.future._
+import cats.instances.future.catsStdInstancesForFuture
+import com.softwaremill.macwire.wire
 import org.alexeyn.RequestsSupport._
 import org.alexeyn.TestData._
 import org.alexeyn.http.QueryRoutes
@@ -12,9 +13,8 @@ import org.scalatest.{Matchers, WordSpec}
 import scala.concurrent.Future
 
 class QueryRoutesTest extends WordSpec with Matchers with ScalatestRouteTest {
-  private val stubDao = createStubDao
-  private val service = new TripService[Future](stubDao)
-  private val routes = QueryRoutes.routes(service)
+  val service = wire[TripService[Future]]
+  val routes = wire[QueryRoutes].routes
 
   "QueryRoutes" should {
     "return all trips sorted by some parameter" in {

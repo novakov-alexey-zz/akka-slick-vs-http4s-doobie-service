@@ -2,7 +2,8 @@ package org.alexeyn
 
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import cats.instances.future._
+import cats.instances.future.catsStdInstancesForFuture
+import com.softwaremill.macwire.wire
 import org.alexeyn.TestData._
 import org.alexeyn.http.CommandRoutes
 import org.alexeyn.json.SprayJsonCodes._
@@ -12,9 +13,8 @@ import scala.concurrent.Future
 
 class CommandRoutesTest extends WordSpec with Matchers with ScalatestRouteTest {
 
-  private val stubDao = createStubDao
-  private val service = new TripService[Future](stubDao)
-  private val routes = CommandRoutes.routes(service)
+  val service = wire[TripService[Future]]
+  val routes = wire[CommandRoutes].routes
 
   "CommandRoutes" should {
     "insert new trip and return its id" in {

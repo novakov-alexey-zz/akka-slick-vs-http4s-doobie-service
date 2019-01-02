@@ -3,7 +3,8 @@ package org.alexeyn
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import akka.http.scaladsl.unmarshalling.FromEntityUnmarshaller
-import cats.instances.future._
+import cats.instances.future.catsStdInstancesForFuture
+import com.softwaremill.macwire.wire
 import org.alexeyn.TestData.tripId
 import org.alexeyn.http.CommandRoutes
 import org.alexeyn.json.GenericJsonWriter
@@ -23,12 +24,11 @@ class JsonPerfTest extends FlatSpec with ScalatestRouteTest with Matchers {
       Key.verbose -> false
     ).withWarmer(new Warmer.Default)
 
-  val stubDao = createStubDao
-  val service = new TripService(stubDao)
+  val service = wire[TripService[Future]]
 
   it should "print performance statistics for Upickle Json library" in {
     import org.alexeyn.json.UpickleJsonCodes._
-    val routes = CommandRoutes.routes(service)
+    val routes: Route = wire[CommandRoutes].routes
 
     val time = {
       standardConfig.measure {
@@ -42,7 +42,7 @@ class JsonPerfTest extends FlatSpec with ScalatestRouteTest with Matchers {
 
   it should "print performance statistics for Spray Json library" in {
     import org.alexeyn.json.SprayJsonCodes._
-    val routes = CommandRoutes.routes(service)
+    val routes: Route = wire[CommandRoutes].routes
 
     val time = {
       standardConfig.measure {

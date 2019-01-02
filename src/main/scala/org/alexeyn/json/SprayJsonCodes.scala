@@ -5,9 +5,10 @@ import java.time.format.DateTimeFormatter
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import org.alexeyn.{CommandResult, Trip, Trips, Vehicle}
-import spray.json.{DefaultJsonProtocol, DeserializationException, JsString, JsValue, JsonFormat, RootJsonFormat}
+import spray.json.DefaultJsonProtocol._
+import spray.json.{DeserializationException, JsString, JsValue, JsonFormat, RootJsonFormat}
 
-trait SprayJsonCodes extends SprayJsonSupport with DefaultJsonProtocol {
+trait SprayJsonCodes extends SprayJsonSupport {
   implicit val vehicle: RootJsonFormat[Vehicle.Value] = enumFormat(Vehicle)
 
   implicit val localDate: JsonFormat[LocalDate] =

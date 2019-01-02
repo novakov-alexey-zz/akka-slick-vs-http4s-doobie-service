@@ -13,15 +13,16 @@ import org.alexeyn.json.GenericJsonWriter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object CommandRoutes extends ApiV1 with CORSHandler {
+class CommandRoutes(service: TripService[Future])(
+  implicit ec: ExecutionContext,
+  system: ActorSystem,
+  w: GenericJsonWriter[CommandResult],
+  t: FromRequestUnmarshaller[Trip]
+) extends ApiV1
+    with CORSHandler {
 
-  def routes(service: TripService[Future])(
-    implicit ec: ExecutionContext,
-    system: ActorSystem,
-    w: GenericJsonWriter[CommandResult],
-    t: FromRequestUnmarshaller[Trip]
-  ): Route = {
-    lazy val log = Logging(system, CommandRoutes.getClass)
+  def routes: Route = {
+    lazy val log = Logging(system, getClass)
 
     val route = apiPrefix {
       concat(

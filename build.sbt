@@ -23,6 +23,7 @@ lazy val root = (project in file("."))
       "de.heikoseeberger" %% "akka-http-upickle" % "1.23.0",
       "com.lihaoyi" %% "upickle" % upickleVersion,
       "com.lihaoyi" %% "ujson" % upickleVersion,
+      "com.softwaremill.macwire" %% "macros" % "2.3.1",
       "org.scalatest" %% "scalatest" % "3.0.5" % Test,
       "com.dimafeng" %% "testcontainers-scala" % "0.20.0" % Test,
       "org.testcontainers" % "postgresql" % "1.9.1" % Test,
