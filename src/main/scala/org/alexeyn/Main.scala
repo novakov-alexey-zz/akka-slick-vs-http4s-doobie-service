@@ -14,11 +14,12 @@ object Main extends App with StrictLogging {
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val ec: ExecutionContext = system.dispatcher
 
-  val (server, cfg) = AppConfig.load.fold(e => sys.error(e.toString), identity)
+  val (server, cfg) =
+    AppConfig.load.fold(e => sys.error(s"Failed to load configuration:\n${e.toList.mkString("\n")}"), identity)
   logger.info(s"Server config: $server")
 
   val mod = new Module(cfg)
-  val serverBinding = Http().bindAndHandle(mod.routes, server.host, server.port)
+  val serverBinding = Http().bindAndHandle(mod.routes, server.host.value, server.port.value)
 
   serverBinding.onComplete {
     case Success(b) =>

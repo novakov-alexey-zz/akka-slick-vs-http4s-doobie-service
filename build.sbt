@@ -13,6 +13,7 @@ lazy val root = (project in file("."))
       "ch.qos.logback" % "logback-classic" % "1.2.3",
       "org.postgresql" % "postgresql" % "9.4-1203-jdbc4",
       "com.github.pureconfig" %% "pureconfig" % "0.10.1",
+      "eu.timepit" %% "refined-pureconfig" % "0.9.3",
       "com.typesafe.slick" %% "slick" % slickVersion,
       "com.typesafe.slick" %% "slick-hikaricp" % slickVersion,
       "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
