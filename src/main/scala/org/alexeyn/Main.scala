@@ -19,6 +19,8 @@ object Main extends App with StrictLogging {
   logger.info(s"Server config: $server")
 
   val mod = new Module(cfg)
+  mod.init().failed.foreach(t => logger.error("Failed to initialize Trips module", t))
+
   val serverBinding = Http().bindAndHandle(mod.routes, server.host.value, server.port.value)
 
   serverBinding.onComplete {

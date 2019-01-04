@@ -2,6 +2,12 @@
 
 ### Run with SBT
 
+Before running the service, you need to start Postgres database using available script:
+
+```bash
+sh start-dev-db.sh
+```
+
 Use `sbt run` command
 
 ### Run with Docker Compose

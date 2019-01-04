@@ -12,18 +12,15 @@ import com.softwaremill.macwire._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class Module(cfg: Config, createSchema: Boolean = true)(implicit system: ActorSystem, ec: ExecutionContext)
-    extends StrictLogging {
+class Module(cfg: Config)(implicit system: ActorSystem, ec: ExecutionContext) extends StrictLogging {
 
   val db = Database.forConfig("storage", cfg)
   val dao = wire[TripDao]
   val service = wire[TripService[Future]]
   val routes = concat(wire[QueryRoutes].routes, wire[CommandRoutes].routes)
 
-  if (createSchema) _createSchema()
-
-  private def _createSchema(): Unit =
-    dao.createSchema().failed.foreach(t => logger.error(s"Failed to create schema: $t"))
+  def init(): Future[Either[Throwable, Unit]] =
+    dao.createSchema().failed.map(t => Left(t))
 
   def close(): Unit = db.close()
 }
