@@ -15,7 +15,7 @@ class CommandRoutes(service: TripService[IO]) extends CirceJsonCodecs with Stric
       for {
         trip <- req.as[Trip]
         _ = logger.debug("Create new trip '{}'", trip)
-        i <- service.insertF(trip)
+        i <- service.insert(trip)
         resp <- Ok(CommandResult(i))
       } yield resp
 
@@ -23,7 +23,7 @@ class CommandRoutes(service: TripService[IO]) extends CirceJsonCodecs with Stric
       for {
         trip <- req.as[Trip]
         _ = logger.debug("Update trip: '{}'", trip)
-        i <- service.updateF(id, trip)
+        i <- service.update(id, trip)
         resp <- Ok(CommandResult(i))
       } yield resp
 

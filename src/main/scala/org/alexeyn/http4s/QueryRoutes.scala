@@ -24,7 +24,7 @@ class QueryRoutes(service: TripService[IO]) extends CirceJsonCodecs with StrictL
     case GET -> Root :? OptSort(sort) +& OptPage(page) +& OptPageSize(pageSize) =>
       logger.debug("Select all sorted by '{}'", sort)
       service
-        .selectAllF(page, pageSize, sort)
+        .selectAll(page, pageSize, sort)
         .flatMap(Ok(_))
   }
 }
