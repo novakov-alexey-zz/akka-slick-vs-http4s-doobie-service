@@ -1,16 +1,17 @@
-package org.alexeyn
+package org.alexeyn.dao
 
 import java.sql.Timestamp
 import java.time._
 
 import org.alexeyn.Vehicle.Vehicle
+import org.alexeyn.{Trip, Vehicle}
 import slick.dbio.Effect
 import slick.jdbc.PostgresProfile.api._
 import slick.sql.FixedSqlAction
 
 import scala.concurrent.Future
 
-class TripDao(db: Database) extends Dao[Trip, Future] {
+class SlickTripDao(db: Database) extends Dao[Trip, Future] {
   implicit val vehicleEnumMapper =
     MappedColumnType.base[Vehicle, String](_.toString, Vehicle.withName)
 

@@ -4,12 +4,13 @@ import cats.{Functor, MonadError}
 import cats.syntax.functor._
 import cats.syntax.flatMap._
 import org.alexeyn.TripService._
+import org.alexeyn.dao.Dao
 
 import scala.language.higherKinds
 
-class TripService[F[_]: Functor](dao: Dao[Trip, F])(implicit M: MonadError[F, Throwable]) {
+class TripService[F[_]: Functor](dao: Dao[Trip, F])(implicit M: MonadError[F, Throwable]) extends TripAlg[F] {
 
-  def selectAll(page: Option[Int], pageSize: Option[Int], sort: Option[String]): F[Trips] = {
+  override def selectAll(page: Option[Int], pageSize: Option[Int], sort: Option[String]): F[Trips] = {
     val sortBy = sort
       .map(s => dao.sortingFields.find(_ == s).toRight(s"Unknown sort field $s"))
       .getOrElse(Right(DefaultSortField))
@@ -27,12 +28,12 @@ class TripService[F[_]: Functor](dao: Dao[Trip, F])(implicit M: MonadError[F, Th
     }
   }
 
-  def select(id: Int): F[Option[Trip]] = dao.select(id)
+  override def select(id: Int): F[Option[Trip]] = dao.select(id)
 
-  def insert(trip: Trip): F[Int] =
+  override def insert(trip: Trip): F[Int] =
     validateTrip(trip).flatMap(_ => dao.insert(trip))
 
-  def update(id: Int, trip: Trip): F[Int] =
+  override def update(id: Int, trip: Trip): F[Int] =
     validateTrip(trip).flatMap(_ => dao.update(id, trip))
 
   private def validateTrip(trip: Trip): F[Unit] = trip match {
@@ -43,7 +44,7 @@ class TripService[F[_]: Functor](dao: Dao[Trip, F])(implicit M: MonadError[F, Th
     case _ => M.pure(())
   }
 
-  def delete(id: Int): F[Int] = dao.delete(id)
+  override def delete(id: Int): F[Int] = dao.delete(id)
 }
 
 object TripService {

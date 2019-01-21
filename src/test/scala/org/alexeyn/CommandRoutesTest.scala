@@ -5,7 +5,8 @@ import akka.http.scaladsl.testkit.ScalatestRouteTest
 import cats.instances.future.catsStdInstancesForFuture
 import com.softwaremill.macwire.wire
 import org.alexeyn.TestData._
-import org.alexeyn.http.CommandRoutes
+import org.alexeyn.akkahttp.CommandRoutes
+import org.alexeyn.dao.Dao
 import org.alexeyn.json.SprayJsonCodes._
 import org.scalatest.{Matchers, WordSpec}
 

@@ -44,7 +44,7 @@ object AppConfig extends StrictLogging {
 
   private val path = sys.env.getOrElse("APP_CONFIG_PATH", "src/main/resources/application.conf")
 
-  implicit def hint[T] = ProductHint[T](ConfigFieldMapping(CamelCase, CamelCase))
+  implicit def hint[T]: ProductHint[T] = ProductHint[T](ConfigFieldMapping(CamelCase, CamelCase))
 
   def load: Either[ConfigReaderFailures, (Server, Config)] = {
     val config = ConfigFactory.parseFile(new File(path), parseOptions).resolve()

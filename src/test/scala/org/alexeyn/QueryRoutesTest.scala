@@ -6,7 +6,8 @@ import cats.instances.future.catsStdInstancesForFuture
 import com.softwaremill.macwire.wire
 import org.alexeyn.RequestsSupport._
 import org.alexeyn.TestData._
-import org.alexeyn.http.QueryRoutes
+import org.alexeyn.akkahttp.QueryRoutes
+import org.alexeyn.dao.Dao
 import org.alexeyn.json.SprayJsonCodes._
 import org.scalatest.{Matchers, WordSpec}
 

@@ -1,4 +1,4 @@
-package org.alexeyn
+package org.alexeyn.dao
 
 trait Dao[T, U[_]] {
   def delete(id: Int) : U[Int]

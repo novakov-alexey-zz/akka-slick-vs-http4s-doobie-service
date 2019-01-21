@@ -6,7 +6,8 @@ import akka.http.scaladsl.unmarshalling.FromEntityUnmarshaller
 import cats.instances.future.catsStdInstancesForFuture
 import com.softwaremill.macwire.wire
 import org.alexeyn.TestData.tripId
-import org.alexeyn.http.CommandRoutes
+import org.alexeyn.akkahttp.CommandRoutes
+import org.alexeyn.dao.Dao
 import org.alexeyn.json.GenericJsonWriter
 import org.scalameter._
 import org.scalatest.{DoNotDiscover, FlatSpec, Matchers}

@@ -38,7 +38,7 @@ class E2ETest
       .atKey("storage")
   )
 
-  lazy val mod = new Module(cfg)
+  lazy val mod = new AkkaModule(cfg)
 
   before {
     Await.ready(mod.db.run(mod.dao.dropSchema()), 10.seconds)

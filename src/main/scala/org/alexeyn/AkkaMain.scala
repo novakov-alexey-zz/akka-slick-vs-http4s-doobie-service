@@ -9,7 +9,7 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext}
 import scala.util.{Failure, Success}
 
-object Main extends App with StrictLogging {
+object AkkaMain extends App with StrictLogging {
   implicit val system: ActorSystem = ActorSystem("trips-service")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val ec: ExecutionContext = system.dispatcher
@@ -18,7 +18,7 @@ object Main extends App with StrictLogging {
     AppConfig.load.fold(e => sys.error(s"Failed to load configuration:\n${e.toList.mkString("\n")}"), identity)
   logger.info(s"Server config: $server")
 
-  val mod = new Module(cfg)
+  val mod = new AkkaModule(cfg)
   mod.init().failed.foreach(t => logger.error("Failed to initialize Trips module", t))
 
   val serverBinding = Http().bindAndHandle(mod.routes, server.host.value, server.port.value)
