@@ -47,7 +47,7 @@ class QueryRoutesTest extends WordSpec with Matchers with ScalatestRouteTest {
 
   private def createStubDao = {
     new Dao[Trip, Future] {
-      override def createSchema(): Future[Unit] = Future.successful()
+      override def createSchema(): Future[Unit] = Future.successful(())
       override def insert(row: Trip): Future[Int] = Future.successful(1)
       override def selectAll(page: Int, pageSize: Int, sort: String): Future[Seq[Trip]] = {
         sort match {

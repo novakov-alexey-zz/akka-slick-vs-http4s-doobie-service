@@ -81,7 +81,7 @@ class JsonPerfTest extends FlatSpec with ScalatestRouteTest with Matchers {
 
   private def createStubDao = {
     new Dao[Trip, Future] {
-      override def createSchema(): Future[Unit] = Future.successful()
+      override def createSchema(): Future[Unit] = Future.successful(())
       override def insert(row: Trip): Future[Int] = Future.successful(tripId)
       override def selectAll(page: Int, pageSize: Int, sort: String): Future[Seq[Trip]] = ???
       override def select(id: Int): Future[Option[Trip]] = ???
