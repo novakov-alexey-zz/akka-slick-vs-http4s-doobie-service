@@ -4,6 +4,7 @@ lazy val slickVersion = "3.2.3"
 lazy val upickleVersion = "0.6.7"
 lazy val http4sVersion = "0.19.0-M4"
 lazy val circeVersion = "0.11.1"
+lazy val doobieVersion = "0.6.0"
 
 lazy val root = (project in file("."))
   .settings(
@@ -11,6 +12,8 @@ lazy val root = (project in file("."))
     name := "akka-crud-service",
     scalacOptions ++= Seq("-Ypartial-unification"),
     libraryDependencies ++= Seq(
+      "org.tpolecat" %% "doobie-core"      % doobieVersion,
+      "org.tpolecat" %% "doobie-postgres"  % doobieVersion,
       "org.http4s" %% "http4s-blaze-server" % http4sVersion,
       "org.http4s" %% "http4s-blaze-client" % http4sVersion,
       "org.http4s" %% "http4s-circe" % http4sVersion,
