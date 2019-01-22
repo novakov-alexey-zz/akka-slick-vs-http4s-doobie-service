@@ -20,7 +20,7 @@
     <logger name="slick" level="OFF"/>
     <logger name="com.zaxxer.hikari" level="OFF"/>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="ASYNCSTDOUT"/>
     </root>
 </configuration>
