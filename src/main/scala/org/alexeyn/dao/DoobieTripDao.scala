@@ -73,5 +73,12 @@ class DoobieTripDao[F[_]](xa: Transactor[F])(implicit F: Sync[F]) extends Dao[Tr
       .option
       .transact(xa)
 
+  def testDB() = sql"""
+        SELECT 1
+        FROM   information_schema.tables
+        WHERE  table_catalog = 'trips'
+        AND    table_name = 'trips';"""
+    .query[Int].unique.transact(xa)
+
   override def sortingFields = DoobieTripDao.columns
 }
