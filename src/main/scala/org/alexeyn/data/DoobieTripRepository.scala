@@ -1,11 +1,11 @@
-package org.alexeyn.dao
+package org.alexeyn.data
 
 import cats.effect.Sync
 import doobie._
 import doobie.implicits._
 import org.alexeyn.{Trip, Vehicle}
 import org.alexeyn.Vehicle.Vehicle
-import org.alexeyn.dao.DoobieTripRepository._
+import org.alexeyn.data.DoobieTripRepository._
 
 import scala.collection.mutable
 
@@ -32,7 +32,7 @@ object DoobieTripRepository {
   val updateFrag = fr"UPDATE trips SET (" ++ Fragment.const(columnsWithComma) ++ fr") = "
 }
 
-class DoobieTripRepository[F[_]](xa: Transactor[F])(implicit F: Sync[F]) extends Repository[Trip, F] {
+class DoobieTripRepository[F[_]](xa: Transactor[F])(implicit F: Sync[F]) extends Repository[F] {
   implicit val vehicleMeta: Meta[Vehicle] = Meta[String].timap(s => Vehicle.withName(s))(v => v.toString)
   implicit val han: LogHandler = LogHandler.jdkLogHandler
 

@@ -6,7 +6,7 @@ import cats.instances.future.catsStdInstancesForFuture
 import com.softwaremill.macwire.wire
 import org.alexeyn.TestData._
 import org.alexeyn.akkahttp.CommandRoutes
-import org.alexeyn.dao.Repository
+import org.alexeyn.data.Repository
 import org.alexeyn.json.SprayJsonCodes._
 import org.scalatest.{Matchers, WordSpec}
 
@@ -87,7 +87,7 @@ class CommandRoutesTest extends WordSpec with Matchers with ScalatestRouteTest {
   }
 
   private def createStubDao = {
-    new Repository[Trip, Future] {
+    new Repository[Future] {
       override def createSchema(): Future[Unit] = Future.successful(())
       override def insert(row: Trip): Future[Int] = Future.successful(tripId)
       override def selectAll(page: Int, pageSize: Int, sort: String): Future[Seq[Trip]] = ???

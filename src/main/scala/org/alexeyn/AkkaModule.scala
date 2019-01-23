@@ -9,7 +9,7 @@ import org.alexeyn.akkahttp.{CommandRoutes, QueryRoutes}
 import org.alexeyn.json.SprayJsonCodes._
 import slick.jdbc.PostgresProfile.api._
 import com.softwaremill.macwire._
-import org.alexeyn.dao.SlickTripRepository
+import org.alexeyn.data.SlickTripRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 

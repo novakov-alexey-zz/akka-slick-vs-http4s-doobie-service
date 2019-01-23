@@ -1,4 +1,4 @@
-package org.alexeyn.dao
+package org.alexeyn.data
 
 import java.sql.Timestamp
 import java.time._
@@ -13,7 +13,7 @@ import slick.sql.FixedSqlAction
 
 import scala.concurrent.Future
 
-class SlickTripRepository(db: Database) extends Repository[Trip, Future] {
+class SlickTripRepository(db: Database) extends Repository[Future] {
   implicit val vehicleEnumMapper: JdbcType[Vehicle] with BaseTypedType[Vehicle] =
     MappedColumnType.base[Vehicle, String](_.toString, Vehicle.withName)
 

@@ -5,7 +5,7 @@ import com.softwaremill.macwire.wire
 import cats.implicits._
 import com.typesafe.scalalogging.StrictLogging
 import doobie.Transactor
-import org.alexeyn.dao.DoobieTripRepository
+import org.alexeyn.data.DoobieTripRepository
 import org.alexeyn.http4s.{CommandRoutes, QueryRoutes}
 import org.http4s.HttpRoutes
 import org.http4s.implicits._
