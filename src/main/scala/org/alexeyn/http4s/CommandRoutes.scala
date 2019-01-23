@@ -1,33 +1,39 @@
 package org.alexeyn.http4s
 
-import cats.effect.IO
+import cats.implicits._
+import cats.effect.Sync
 import org.alexeyn.json.CirceJsonCodecs
-import org.alexeyn.{CommandResult, Trip, TripService}
+import org.alexeyn.{CommandResult, Trip, TripService, UserError}
 import org.http4s.HttpRoutes
-import org.http4s.dsl.impl.{IntVar, Root}
-import org.http4s.dsl.io._
+import org.http4s.dsl.Http4sDsl
 
-class CommandRoutes(service: TripService[IO]) extends CirceJsonCodecs {
+class CommandRoutes[F[_]: Sync](service: TripService[F])(implicit H: HttpErrorHandler[F, UserError])
+    extends Http4sDsl[F]
+    with CirceJsonCodecs {
 
-  val routes = HttpRoutes.of[IO] {
-    case req @ POST -> Root =>
-      for {
-        trip <- req.as[Trip]
-        i <- service.insert(trip)
-        resp <- Ok(CommandResult(i))
-      } yield resp
+  val routes: HttpRoutes[F] = {
+    val r = HttpRoutes.of[F] {
+      case req @ POST -> Root =>
+        for {
+          trip <- req.as[Trip]
+          i <- service.insert(trip)
+          resp <- Ok(CommandResult(i))
+        } yield resp
 
-    case req @ PUT -> Root / IntVar(id) =>
-      for {
-        trip <- req.as[Trip]
-        i <- service.update(id, trip)
-        resp <- Ok(CommandResult(i))
-      } yield resp
+      case req @ PUT -> Root / IntVar(id) =>
+        for {
+          trip <- req.as[Trip]
+          i <- service.update(id, trip)
+          resp <- Ok(CommandResult(i))
+        } yield resp
 
-    case DELETE -> Root / IntVar(id) =>
-      for {
-        i <- service.delete(id)
-        resp <- Ok(CommandResult(i))
-      } yield resp
+      case DELETE -> Root / IntVar(id) =>
+        for {
+          i <- service.delete(id)
+          resp <- Ok(CommandResult(i))
+        } yield resp
+    }
+
+    H.handle(r)
   }
 }

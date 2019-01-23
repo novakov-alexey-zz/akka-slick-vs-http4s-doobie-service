@@ -37,10 +37,12 @@ class TripService[F[_]: Functor](repo: Repository[F])(implicit M: MonadError[F, 
     validateTrip(trip).flatMap(_ => repo.update(id, trip))
 
   private def validateTrip(trip: Trip): F[Unit] = trip match {
-    case Trip(_, _, _, _, true, None, _) => M.raiseError(new Exception("Completed trip must have non-empty distance"))
-    case Trip(_, _, _, _, true, _, None) => M.raiseError(new Exception("Completed trip must have non-empty end_date"))
+    case Trip(_, _, _, _, true, None, _) =>
+      M.raiseError(InvalidTrip(trip, "completed trip must have non-empty 'distance'"))
+    case Trip(_, _, _, _, true, _, None) =>
+      M.raiseError(InvalidTrip(trip, "completed trip must have non-empty 'end_date'"))
     case Trip(_, _, _, _, false, None, Some(_)) =>
-      M.raiseError(new Exception("Non-completed trip must have empty end_date"))
+      M.raiseError(InvalidTrip(trip, "non-completed trip must have empty 'end_date'"))
     case _ => M.pure(())
   }
 
