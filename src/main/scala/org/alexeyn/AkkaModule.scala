@@ -16,12 +16,12 @@ import scala.concurrent.{ExecutionContext, Future}
 class AkkaModule(cfg: Config)(implicit system: ActorSystem, ec: ExecutionContext) extends StrictLogging {
 
   val db = Database.forConfig("storage", cfg)
-  val dao = wire[SlickTripRepository]
+  val repo = wire[SlickTripRepository]
   val service = wire[TripService[Future]]
   val routes = concat(wire[QueryRoutes].routes, wire[CommandRoutes].routes)
 
   def init(): Future[Either[Throwable, Unit]] =
-    dao.createSchema().failed.map(t => Left(t))
+    repo.createSchema().failed.map(t => Left(t))
 
   def close(): Unit = db.close()
 }

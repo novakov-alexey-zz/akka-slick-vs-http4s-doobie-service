@@ -8,18 +8,18 @@ import org.alexeyn.data.Repository
 
 import scala.language.higherKinds
 
-class TripService[F[_]: Functor](dao: Repository[F])(implicit M: MonadError[F, Throwable]) extends TripAlg[F] {
+class TripService[F[_]: Functor](repo: Repository[F])(implicit M: MonadError[F, Throwable]) extends TripAlg[F] {
 
   override def selectAll(page: Option[Int], pageSize: Option[Int], sort: Option[String]): F[Trips] = {
     val sortBy = sort
-      .map(s => dao.sortingFields.find(_ == s).toRight(s"Unknown sort field $s"))
+      .map(s => repo.sortingFields.find(_ == s).toRight(s"Unknown sort field $s"))
       .getOrElse(Right(DefaultSortField))
 
     lazy val pageN = page.getOrElse(DefaultPage)
     lazy val size = pageSize.getOrElse(DefaultPageSize)
 
     sortBy.map { sort =>
-      dao
+      repo
         .selectAll(pageN, size, sort)
         .map(Trips)
     } match {
@@ -28,13 +28,13 @@ class TripService[F[_]: Functor](dao: Repository[F])(implicit M: MonadError[F, T
     }
   }
 
-  override def select(id: Int): F[Option[Trip]] = dao.select(id)
+  override def select(id: Int): F[Option[Trip]] = repo.select(id)
 
   override def insert(trip: Trip): F[Int] =
-    validateTrip(trip).flatMap(_ => dao.insert(trip))
+    validateTrip(trip).flatMap(_ => repo.insert(trip))
 
   override def update(id: Int, trip: Trip): F[Int] =
-    validateTrip(trip).flatMap(_ => dao.update(id, trip))
+    validateTrip(trip).flatMap(_ => repo.update(id, trip))
 
   private def validateTrip(trip: Trip): F[Unit] = trip match {
     case Trip(_, _, _, _, true, None, _) => M.raiseError(new Exception("Completed trip must have non-empty distance"))
@@ -44,7 +44,7 @@ class TripService[F[_]: Functor](dao: Repository[F])(implicit M: MonadError[F, T
     case _ => M.pure(())
   }
 
-  override def delete(id: Int): F[Int] = dao.delete(id)
+  override def delete(id: Int): F[Int] = repo.delete(id)
 }
 
 object TripService {

@@ -86,7 +86,7 @@ class CommandRoutesTest extends WordSpec with Matchers with ScalatestRouteTest {
     contentType should ===(ContentTypes.`application/json`)
   }
 
-  private def createStubDao = {
+  private def createStubRepo = {
     new Repository[Future] {
       override def createSchema(): Future[Unit] = Future.successful(())
       override def insert(row: Trip): Future[Int] = Future.successful(tripId)

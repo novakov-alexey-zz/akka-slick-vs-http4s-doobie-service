@@ -17,16 +17,16 @@ class Http4sModule(cfg: JdbcConfig) extends StrictLogging {
   implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
   val xa = Transactor.fromDriverManager[IO](cfg.driver.value, cfg.url.value, cfg.user.value, cfg.password.value)
-  val dao = wire[DoobieTripRepository[IO]]
+  val repo = wire[DoobieTripRepository[IO]]
   val service = wire[TripService[IO]]
   val apiPrefix = "/api/v1/trips"
   val routes: HttpRoutes[IO] = Router(apiPrefix -> (wire[QueryRoutes].routes <+> wire[CommandRoutes].routes))
 
   def init(): IO[Unit] =
-    dao
+    repo
       .schemaExists()
       .handleErrorWith { _ =>
         logger.info("Going to create database schema")
-        dao.createSchema()
+        repo.createSchema()
       }
 }
