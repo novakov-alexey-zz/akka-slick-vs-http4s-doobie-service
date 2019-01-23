@@ -5,6 +5,8 @@ import cats.implicits._
 import com.typesafe.scalalogging.StrictLogging
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.implicits._
+import org.http4s.server.middleware.Logger
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object Http4sMain extends IOApp with StrictLogging {
@@ -15,11 +17,12 @@ object Http4sMain extends IOApp with StrictLogging {
   mod.init().unsafeToFuture().failed.foreach(t => logger.error("Failed to initialize Trips module", t))
 
   val apiV1App = mod.routes.orNotFound
+  val finalHttpApp = Logger(logHeaders = true, logBody = true)(apiV1App)
 
   def run(args: List[String]): IO[ExitCode] =
     BlazeServerBuilder[IO]
       .bindHttp(server.port.value, server.host.value)
-      .withHttpApp(apiV1App)
+      .withHttpApp(finalHttpApp)
       .serve
       .compile
       .drain
