@@ -4,11 +4,11 @@ import cats.{Functor, MonadError}
 import cats.syntax.functor._
 import cats.syntax.flatMap._
 import org.alexeyn.TripService._
-import org.alexeyn.dao.Dao
+import org.alexeyn.dao.Repository
 
 import scala.language.higherKinds
 
-class TripService[F[_]: Functor](dao: Dao[Trip, F])(implicit M: MonadError[F, Throwable]) extends TripAlg[F] {
+class TripService[F[_]: Functor](dao: Repository[Trip, F])(implicit M: MonadError[F, Throwable]) extends TripAlg[F] {
 
   override def selectAll(page: Option[Int], pageSize: Option[Int], sort: Option[String]): F[Trips] = {
     val sortBy = sort

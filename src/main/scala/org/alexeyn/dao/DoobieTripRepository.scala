@@ -5,11 +5,11 @@ import doobie._
 import doobie.implicits._
 import org.alexeyn.{Trip, Vehicle}
 import org.alexeyn.Vehicle.Vehicle
-import org.alexeyn.dao.DoobieTripDao._
+import org.alexeyn.dao.DoobieTripRepository._
 
 import scala.collection.mutable
 
-object DoobieTripDao {
+object DoobieTripRepository {
   val (columns, columnsWithComma) = {
     val columns = mutable.LinkedHashSet[String]("id", "city", "vehicle", "price", "completed", "distance", "end_date")
     (columns.toSet, columns.mkString(","))
@@ -32,7 +32,7 @@ object DoobieTripDao {
   val updateFrag = fr"UPDATE trips SET (" ++ Fragment.const(columnsWithComma) ++ fr") = "
 }
 
-class DoobieTripDao[F[_]](xa: Transactor[F])(implicit F: Sync[F]) extends Dao[Trip, F] {
+class DoobieTripRepository[F[_]](xa: Transactor[F])(implicit F: Sync[F]) extends Repository[Trip, F] {
   implicit val vehicleMeta: Meta[Vehicle] = Meta[String].timap(s => Vehicle.withName(s))(v => v.toString)
   implicit val han: LogHandler = LogHandler.jdkLogHandler
 
@@ -58,7 +58,7 @@ class DoobieTripDao[F[_]](xa: Transactor[F])(implicit F: Sync[F]) extends Dao[Tr
   }
 
   override def selectAll(page: Int, pageSize: Int, sort: String) =
-    sql"select * from trips"
+    sql"SELECT * FROM trips"
       .query[Trip]
       .stream
       .drop(page * pageSize)
@@ -68,17 +68,20 @@ class DoobieTripDao[F[_]](xa: Transactor[F])(implicit F: Sync[F]) extends Dao[Tr
       .transact(xa)
 
   override def select(id: Int) =
-    sql"SELECT * FROM trips"
+    sql"SELECT * FROM trips WHERE id = $id"
       .query[Trip]
       .option
       .transact(xa)
 
-  def testDB() = sql"""
+  def schemaExists(): F[Unit] =
+    sql"""
         SELECT 1
         FROM   information_schema.tables
         WHERE  table_catalog = 'trips'
         AND    table_name = 'trips';"""
-    .query[Int].unique.transact(xa)
+      .query[Unit]
+      .unique
+      .transact(xa)
 
-  override def sortingFields = DoobieTripDao.columns
+  override def sortingFields = DoobieTripRepository.columns
 }

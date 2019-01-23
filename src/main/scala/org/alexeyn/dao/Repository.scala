@@ -1,6 +1,6 @@
 package org.alexeyn.dao
 
-trait Dao[T, U[_]] {
+trait Repository[T, U[_]] {
   def delete(id: Int) : U[Int]
 
   def update(id: Int, row: T): U[Int]

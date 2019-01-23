@@ -5,17 +5,19 @@ import java.time._
 
 import org.alexeyn.Vehicle.Vehicle
 import org.alexeyn.{Trip, Vehicle}
+import slick.ast.BaseTypedType
 import slick.dbio.Effect
+import slick.jdbc.JdbcType
 import slick.jdbc.PostgresProfile.api._
 import slick.sql.FixedSqlAction
 
 import scala.concurrent.Future
 
-class SlickTripDao(db: Database) extends Dao[Trip, Future] {
-  implicit val vehicleEnumMapper =
+class SlickTripRepository(db: Database) extends Repository[Trip, Future] {
+  implicit val vehicleEnumMapper: JdbcType[Vehicle] with BaseTypedType[Vehicle] =
     MappedColumnType.base[Vehicle, String](_.toString, Vehicle.withName)
 
-  implicit val localDateColumnType = MappedColumnType
+  implicit val localDateColumnType: JdbcType[LocalDate] with BaseTypedType[LocalDate] = MappedColumnType
     .base[LocalDate, Timestamp](
       d => Timestamp.from(d.atStartOfDay(ZoneId.systemDefault()).toInstant),
       d => d.toLocalDateTime.toLocalDate

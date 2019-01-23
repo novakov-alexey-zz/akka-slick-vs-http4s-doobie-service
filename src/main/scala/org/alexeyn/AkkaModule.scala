@@ -9,14 +9,14 @@ import org.alexeyn.akkahttp.{CommandRoutes, QueryRoutes}
 import org.alexeyn.json.SprayJsonCodes._
 import slick.jdbc.PostgresProfile.api._
 import com.softwaremill.macwire._
-import org.alexeyn.dao.SlickTripDao
+import org.alexeyn.dao.SlickTripRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class AkkaModule(cfg: Config)(implicit system: ActorSystem, ec: ExecutionContext) extends StrictLogging {
 
   val db = Database.forConfig("storage", cfg)
-  val dao = wire[SlickTripDao]
+  val dao = wire[SlickTripRepository]
   val service = wire[TripService[Future]]
   val routes = concat(wire[QueryRoutes].routes, wire[CommandRoutes].routes)
 
