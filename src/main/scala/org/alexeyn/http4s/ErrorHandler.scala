@@ -25,10 +25,6 @@ trait HttpErrorHandler[F[_], E <: Throwable] {
   def handle(routes: HttpRoutes[F]): HttpRoutes[F]
 }
 
-object HttpErrorHandler {
-  def apply[F[_], E <: Throwable](implicit ev: HttpErrorHandler[F, E]) = ev
-}
-
 class UserHttpErrorHandler[F[_]](implicit M: MonadError[F, Throwable])
     extends HttpErrorHandler[F, UserError]
     with Http4sDsl[F] {

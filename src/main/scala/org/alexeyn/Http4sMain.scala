@@ -14,6 +14,7 @@ object Http4sMain extends IOApp with StrictLogging {
     AppConfig.load.fold(e => sys.error(s"Failed to load configuration:\n${e.toList.mkString("\n")}"), identity)
 
   val mod = new Http4sModule(jdbc)
+  // TODO: move to run method
   mod.init().unsafeToFuture().failed.foreach(t => logger.error("Failed to initialize Trips module", t))
 
   val apiV1App = mod.routes.orNotFound

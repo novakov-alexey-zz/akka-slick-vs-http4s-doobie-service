@@ -11,29 +11,25 @@ class CommandRoutes[F[_]: Sync](service: TripService[F])(implicit H: HttpErrorHa
     extends Http4sDsl[F]
     with CirceJsonCodecs {
 
-  val routes: HttpRoutes[F] = {
-    val r = HttpRoutes.of[F] {
-      case req @ POST -> Root =>
-        for {
-          trip <- req.as[Trip]
-          i <- service.insert(trip)
-          resp <- Ok(CommandResult(i))
-        } yield resp
+  val routes: HttpRoutes[F] = H.handle(HttpRoutes.of[F] {
+    case req @ POST -> Root =>
+      for {
+        trip <- req.as[Trip]
+        i <- service.insert(trip)
+        resp <- Ok(CommandResult(i))
+      } yield resp
 
-      case req @ PUT -> Root / IntVar(id) =>
-        for {
-          trip <- req.as[Trip]
-          i <- service.update(id, trip)
-          resp <- Ok(CommandResult(i))
-        } yield resp
+    case req @ PUT -> Root / IntVar(id) =>
+      for {
+        trip <- req.as[Trip]
+        i <- service.update(id, trip)
+        resp <- Ok(CommandResult(i))
+      } yield resp
 
-      case DELETE -> Root / IntVar(id) =>
-        for {
-          i <- service.delete(id)
-          resp <- Ok(CommandResult(i))
-        } yield resp
-    }
-
-    H.handle(r)
-  }
+    case DELETE -> Root / IntVar(id) =>
+      for {
+        i <- service.delete(id)
+        resp <- Ok(CommandResult(i))
+      } yield resp
+  })
 }

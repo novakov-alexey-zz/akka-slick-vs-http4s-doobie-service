@@ -7,6 +7,7 @@ import com.typesafe.scalalogging.StrictLogging
 import doobie.Transactor
 import org.alexeyn.data.DoobieTripRepository
 import org.alexeyn.http4s.{CommandRoutes, HttpErrorHandler, QueryRoutes, UserHttpErrorHandler}
+import org.http4s.HttpRoutes
 import org.http4s.implicits._
 import org.http4s.server.Router
 
@@ -22,9 +23,9 @@ class Http4sModule(cfg: JdbcConfig) extends StrictLogging {
   val service = wire[TripService[Effect]]
   val apiPrefix = "/api/v1/trips"
 
-  implicit val errorHandler: HttpErrorHandler[IO, UserError] = new UserHttpErrorHandler[Effect]()
+  implicit val errorHandler: HttpErrorHandler[Effect, UserError] = new UserHttpErrorHandler[Effect]()
 
-  val routes = Router(apiPrefix -> (wire[QueryRoutes[Effect]].routes <+> wire[CommandRoutes[Effect]].routes))
+  val routes: HttpRoutes[Effect] = Router(apiPrefix -> (wire[QueryRoutes[Effect]].routes <+> wire[CommandRoutes[Effect]].routes))
 
   def init(): Effect[Unit] =
     repo

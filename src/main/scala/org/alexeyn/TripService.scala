@@ -15,15 +15,15 @@ class TripService[F[_]: Functor](repo: Repository[F])(implicit M: MonadError[F, 
       .map(s => repo.sortingFields.find(_ == s).toRight(s"Unknown sort field $s"))
       .getOrElse(Right(DefaultSortField))
 
-    lazy val pageN = page.getOrElse(DefaultPage)
-    lazy val size = pageSize.getOrElse(DefaultPageSize)
-
     sortBy.map { sort =>
+      val pageN = page.getOrElse(DefaultPage)
+      val size = pageSize.getOrElse(DefaultPageSize)
+
       repo
         .selectAll(pageN, size, sort)
         .map(Trips)
     } match {
-      case Left(e) => M.raiseError(new Exception(e))
+      case Left(e) => M.raiseError(new Exception(e)) // Replace with database error case class
       case Right(t) => t
     }
   }
@@ -36,13 +36,13 @@ class TripService[F[_]: Functor](repo: Repository[F])(implicit M: MonadError[F, 
   override def update(id: Int, trip: Trip): F[Int] =
     validateTrip(trip).flatMap(_ => repo.update(id, trip))
 
-  private def validateTrip(trip: Trip): F[Unit] = trip match {
-    case Trip(_, _, _, _, true, None, _) =>
-      M.raiseError(InvalidTrip(trip, "completed trip must have non-empty 'distance'"))
-    case Trip(_, _, _, _, true, _, None) =>
-      M.raiseError(InvalidTrip(trip, "completed trip must have non-empty 'end_date'"))
-    case Trip(_, _, _, _, false, None, Some(_)) =>
-      M.raiseError(InvalidTrip(trip, "non-completed trip must have empty 'end_date'"))
+  private val validateTrip: Trip => F[Unit] = {
+    case t @ Trip(_, _, _, _, true, None, _) =>
+      M.raiseError(InvalidTrip(t, "completed trip must have non-empty 'distance'"))
+    case t @ Trip(_, _, _, _, true, _, None) =>
+      M.raiseError(InvalidTrip(t, "completed trip must have non-empty 'end_date'"))
+    case t @ Trip(_, _, _, _, false, None, Some(_)) =>
+      M.raiseError(InvalidTrip(t, "non-completed trip must have empty 'end_date'"))
     case _ => M.pure(())
   }
 
