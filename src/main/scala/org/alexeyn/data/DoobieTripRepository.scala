@@ -70,7 +70,8 @@ class DoobieTripRepository[F[_]](xa: Transactor[F])(implicit F: Sync[F]) extends
   override def select(id: Int) =
     sql"SELECT * FROM trips WHERE id = $id"
       .query[Trip]
-      .option
+      .to[List]
+      .map(_.headOption) // taking any first, this should be changed by having a validation for ID uniqueness
       .transact(xa)
 
   def schemaExists(): F[Unit] =
