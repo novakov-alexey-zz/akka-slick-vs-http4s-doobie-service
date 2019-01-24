@@ -73,6 +73,10 @@ class CommandRoutes(service: TripService[Future])(
         Future.successful(HttpResponse(StatusCodes.OK, entity = e))
 
       case Failure(e) =>
-        Future.successful(HttpResponse(StatusCodes.PreconditionFailed, entity = e.toString))
+        val (status, msg) = e match {
+          case InvalidTrip(trip, m) => (StatusCodes.PreconditionFailed, s"Invalid trip: $trip. Reason: $m")
+          case throwable => (StatusCodes.InternalServerError, s"Something bad happened: $throwable")
+        }
+        Future.successful(HttpResponse(status, entity = msg))
     }
 }
