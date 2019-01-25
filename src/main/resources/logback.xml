@@ -7,9 +7,9 @@
     <conversionRule conversionWord="coloredLevel" converterClass="com.datawerks.spark.ColoredLevel"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <withJansi>true</withJansi>
         <encoder>
-            <pattern>%date{yyyy-MM-dd HH:mm:ss.SSSZ, UTC} %-16level %-43thread %-24logger{24} %message%n%xException
-            </pattern>
+            <pattern>%highlight(%date{yyyy-MM-dd HH:mm:ss.SSSZ, UTC}) [%thread] %highlight(%-5level) %cyan(%logger{15}) - %msg %n</pattern>
         </encoder>
     </appender>
 
