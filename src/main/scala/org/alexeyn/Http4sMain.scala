@@ -1,20 +1,22 @@
 package org.alexeyn
 
+import cats.Applicative
 import cats.effect._
 import cats.implicits._
 import com.typesafe.scalalogging.StrictLogging
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.implicits._
 import org.http4s.server.middleware.Logger
+import fs2.Stream
 
 object Http4sMain extends IOApp with StrictLogging {
   val (server, jdbc, cfg) =
     AppConfig.load.fold(e => sys.error(s"Failed to load configuration:\n${e.toList.mkString("\n")}"), identity)
 
-  def stream[F[_]: ConcurrentEffect](implicit C: ContextShift[F]) = {
-    lazy val mod = new Http4sModule(jdbc)
+  def stream[F[_]: ConcurrentEffect: Applicative](implicit C: ContextShift[F]): Stream[F, ExitCode] =
     for {
-      _ <- mod.init().adaptError { case e => new Exception("Failed to initialize Trips module", e) }
+      mod <- Stream.eval(new Http4sModule(jdbc).pure[F])
+      _ <- Stream.eval(mod.init().adaptError { case e => new RuntimeException("Failed to initialize Trips module", e) })
 
       apiV1App = mod.routes.orNotFound
       finalHttpApp = Logger(logHeaders = true, logBody = true)(apiV1App)
@@ -23,12 +25,7 @@ object Http4sMain extends IOApp with StrictLogging {
         .bindHttp(server.port.value, server.host.value)
         .withHttpApp(finalHttpApp)
         .serve
-        .compile
-        .drain
     } yield exitCode
-  }
 
-  def run(args: List[String]): IO[ExitCode] = {
-    stream[IO].as(ExitCode.Success)
-  }
+  def run(args: List[String]): IO[ExitCode] = stream[IO].compile.drain.as(ExitCode.Success)
 }
