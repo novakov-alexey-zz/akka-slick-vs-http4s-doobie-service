@@ -1,8 +1,8 @@
 package org.alexeyn
 
-import cats.effect.{ContextShift, IO}
-import com.softwaremill.macwire.wire
+import cats.effect.{Async, ContextShift}
 import cats.implicits._
+import com.softwaremill.macwire.wire
 import com.typesafe.scalalogging.StrictLogging
 import doobie.Transactor
 import org.alexeyn.data.DoobieTripRepository
@@ -11,23 +11,18 @@ import org.http4s.HttpRoutes
 import org.http4s.implicits._
 import org.http4s.server.Router
 
-import scala.concurrent.ExecutionContext
+class Http4sModule[F[_]: Async: ContextShift](cfg: JdbcConfig) extends StrictLogging {
 
-class Http4sModule(cfg: JdbcConfig) extends StrictLogging {
-  type Effect[A] = IO[A]
-
-  implicit val cs: ContextShift[Effect] = IO.contextShift(ExecutionContext.global)
-
-  val xa = Transactor.fromDriverManager[Effect](cfg.driver.value, cfg.url.value, cfg.user.value, cfg.password.value)
-  val repo = wire[DoobieTripRepository[Effect]]
-  val service = wire[TripService[Effect]]
+  val xa = Transactor.fromDriverManager[F](cfg.driver.value, cfg.url.value, cfg.user.value, cfg.password.value)
+  val repo = wire[DoobieTripRepository[F]]
+  val service = wire[TripService[F]]
   val apiPrefix = "/api/v1/trips"
 
-  implicit val errorHandler: HttpErrorHandler[Effect, UserError] = new UserHttpErrorHandler[Effect]()
+  implicit val errorHandler: HttpErrorHandler[F, UserError] = new UserHttpErrorHandler[F]()
 
-  val routes: HttpRoutes[Effect] = Router(apiPrefix -> (wire[QueryRoutes[Effect]].routes <+> wire[CommandRoutes[Effect]].routes))
+  val routes: HttpRoutes[F] = Router(apiPrefix -> (wire[QueryRoutes[F]].routes <+> wire[CommandRoutes[F]].routes))
 
-  def init(): Effect[Unit] =
+  def init(): F[Unit] =
     repo
       .schemaExists()
       .handleErrorWith { _ =>
