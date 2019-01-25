@@ -44,16 +44,16 @@ object AppConfig extends StrictLogging {
 
   private val path = sys.env.getOrElse("APP_CONFIG_PATH", "src/main/resources/application.conf")
 
-  implicit def hint[T] = ProductHint[T](ConfigFieldMapping(CamelCase, CamelCase))
+  implicit def hint[T]: ProductHint[T] = ProductHint[T](ConfigFieldMapping(CamelCase, CamelCase))
 
-  def load: Either[ConfigReaderFailures, (Server, Config)] = {
+  def load: Either[ConfigReaderFailures, (Server, JdbcConfig, Config)] = {
     val config = ConfigFactory.parseFile(new File(path), parseOptions).resolve()
     logger.debug("config content:\n {}", config.root().render(renderOptions))
 
     for {
       // validate storage config also
-      _ <- loadConfig[JdbcConfig](config, "storage")
+      j <- loadConfig[JdbcConfig](config, "storage")
       c <- loadConfig[Server](config, "server")
-    } yield c -> config
+    } yield (c, j, config)
   }
 }

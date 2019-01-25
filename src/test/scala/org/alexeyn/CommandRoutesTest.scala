@@ -5,7 +5,8 @@ import akka.http.scaladsl.testkit.ScalatestRouteTest
 import cats.instances.future.catsStdInstancesForFuture
 import com.softwaremill.macwire.wire
 import org.alexeyn.TestData._
-import org.alexeyn.http.CommandRoutes
+import org.alexeyn.akkahttp.CommandRoutes
+import org.alexeyn.data.Repository
 import org.alexeyn.json.SprayJsonCodes._
 import org.scalatest.{Matchers, WordSpec}
 
@@ -85,9 +86,9 @@ class CommandRoutesTest extends WordSpec with Matchers with ScalatestRouteTest {
     contentType should ===(ContentTypes.`application/json`)
   }
 
-  private def createStubDao = {
-    new Dao[Trip, Future] {
-      override def createSchema(): Future[Unit] = Future.successful()
+  private def createStubRepo = {
+    new Repository[Future] {
+      override def createSchema(): Future[Unit] = Future.successful(())
       override def insert(row: Trip): Future[Int] = Future.successful(tripId)
       override def selectAll(page: Int, pageSize: Int, sort: String): Future[Seq[Trip]] = ???
       override def select(id: Int): Future[Option[Trip]] = ???

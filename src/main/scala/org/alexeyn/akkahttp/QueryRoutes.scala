@@ -1,4 +1,4 @@
-package org.alexeyn.http
+package org.alexeyn.akkahttp
 
 import akka.actor.ActorSystem
 import akka.event.Logging

@@ -6,7 +6,8 @@ import akka.http.scaladsl.unmarshalling.FromEntityUnmarshaller
 import cats.instances.future.catsStdInstancesForFuture
 import com.softwaremill.macwire.wire
 import org.alexeyn.TestData.tripId
-import org.alexeyn.http.CommandRoutes
+import org.alexeyn.akkahttp.CommandRoutes
+import org.alexeyn.data.Repository
 import org.alexeyn.json.GenericJsonWriter
 import org.scalameter._
 import org.scalatest.{DoNotDiscover, FlatSpec, Matchers}
@@ -79,9 +80,9 @@ class JsonPerfTest extends FlatSpec with ScalatestRouteTest with Matchers {
     }
   }
 
-  private def createStubDao = {
-    new Dao[Trip, Future] {
-      override def createSchema(): Future[Unit] = Future.successful()
+  private def createStubRepo = {
+    new Repository[Future] {
+      override def createSchema(): Future[Unit] = Future.successful(())
       override def insert(row: Trip): Future[Int] = Future.successful(tripId)
       override def selectAll(page: Int, pageSize: Int, sort: String): Future[Seq[Trip]] = ???
       override def select(id: Int): Future[Option[Trip]] = ???

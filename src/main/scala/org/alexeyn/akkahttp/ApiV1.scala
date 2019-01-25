@@ -1,4 +1,4 @@
-package org.alexeyn.http
+package org.alexeyn.akkahttp
 
 import akka.http.scaladsl.server.Directives.{pathPrefix, _}
 import akka.http.scaladsl.server.Route

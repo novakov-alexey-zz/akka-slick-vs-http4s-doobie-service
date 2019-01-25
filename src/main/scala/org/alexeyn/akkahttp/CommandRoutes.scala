@@ -1,4 +1,4 @@
-package org.alexeyn.http
+package org.alexeyn.akkahttp
 
 import akka.actor.ActorSystem
 import akka.event.Logging
@@ -12,6 +12,7 @@ import org.alexeyn._
 import org.alexeyn.json.GenericJsonWriter
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class CommandRoutes(service: TripService[Future])(
   implicit ec: ExecutionContext,
@@ -53,7 +54,7 @@ class CommandRoutes(service: TripService[Future])(
             log.debug("Delete trip: '{}'", id)
             val deleted = service.delete(id)
             complete {
-              toCommandResponse(Right(deleted), CommandResult)
+              toCommandResponse(deleted, CommandResult)
             }
           })
         }
@@ -63,18 +64,19 @@ class CommandRoutes(service: TripService[Future])(
   }
 
   private def toCommandResponse[T](
-    count: Either[String, Future[Int]],
+    count: Future[Int],
     f: Int => T
-  )(implicit w: GenericJsonWriter[T], ec: ExecutionContext): Future[HttpResponse] = {
+  )(implicit w: GenericJsonWriter[T], ec: ExecutionContext): Future[HttpResponse] =
+    count.transformWith {
+      case Success(i) =>
+        val e = HttpEntity(ContentTypes.`application/json`, w.toJsonString(f(i)))
+        Future.successful(HttpResponse(StatusCodes.OK, entity = e))
 
-    count match {
-      case Right(c) =>
-        c.map(i => {
-          val entity = HttpEntity(ContentTypes.`application/json`, w.toJsonString(f(i)))
-          HttpResponse(StatusCodes.OK, entity = entity)
-        })
-      case Left(e) =>
-        Future.successful(HttpResponse(StatusCodes.PreconditionFailed, entity = e))
+      case Failure(e) =>
+        val (status, msg) = e match {
+          case InvalidTrip(trip, m) => (StatusCodes.PreconditionFailed, s"Invalid trip: $trip. Reason: $m")
+          case throwable => (StatusCodes.InternalServerError, s"Something bad happened: $throwable")
+        }
+        Future.successful(HttpResponse(status, entity = msg))
     }
-  }
 }
