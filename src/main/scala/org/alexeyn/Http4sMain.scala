@@ -14,7 +14,7 @@ object Http4sMain extends IOApp {
 
   override def run(args: List[String]): IO[ExitCode] = stream[IO].compile.drain.as(ExitCode.Success)
 
-  def stream[F[_]: ConcurrentEffect: Applicative](implicit C: ContextShift[F]): Stream[F, ExitCode] =
+  def stream[F[_]: ConcurrentEffect: Applicative: ContextShift]: Stream[F, ExitCode] =
     for {
       mod <- Stream.eval(new Http4sModule(jdbc).pure[F])
       _ <- Stream.eval(mod.init().adaptError { case e => new RuntimeException("Failed to initialize Trips module", e) })
