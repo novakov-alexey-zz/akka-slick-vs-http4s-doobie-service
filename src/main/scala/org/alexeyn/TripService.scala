@@ -1,30 +1,27 @@
 package org.alexeyn
 
-import cats.{Functor, MonadError}
-import cats.syntax.functor._
+import cats.MonadError
 import cats.syntax.flatMap._
+import cats.syntax.functor._
 import org.alexeyn.TripService._
 import org.alexeyn.data.Repository
 
 import scala.language.higherKinds
 
-class TripService[F[_]: Functor](repo: Repository[F])(implicit M: MonadError[F, Throwable]) extends TripAlg[F] {
+class TripService[F[_]](repo: Repository[F])(implicit M: MonadError[F, Throwable]) extends TripAlg[F] {
 
   override def selectAll(page: Option[Int], pageSize: Option[Int], sort: Option[String]): F[Trips] = {
     val sortBy = sort
-      .map(s => repo.sortingFields.find(_ == s).toRight(s"Unknown sort field $s"))
+      .map(s => repo.sortingFields.find(_ == s).toRight(UnknownSortField(s)))
       .getOrElse(Right(DefaultSortField))
 
-    sortBy.map { sort =>
+    M.fromEither(sortBy).flatMap { sort =>
       val pageN = page.getOrElse(DefaultPage)
       val size = pageSize.getOrElse(DefaultPageSize)
 
       repo
         .selectAll(pageN, size, sort)
         .map(Trips)
-    } match {
-      case Left(e) => M.raiseError(new Exception(e)) // Replace with database error case class
-      case Right(t) => t
     }
   }
 

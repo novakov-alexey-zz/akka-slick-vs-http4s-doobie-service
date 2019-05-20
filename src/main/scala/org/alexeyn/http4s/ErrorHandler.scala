@@ -3,7 +3,7 @@ package org.alexeyn.http4s
 import cats.{ApplicativeError, MonadError}
 import cats.data.{Kleisli, OptionT}
 import cats.implicits._
-import org.alexeyn.{InvalidTrip, UserError}
+import org.alexeyn.{InvalidTrip, UnknownSortField, UserError}
 import org.http4s.dsl.Http4sDsl
 import org.http4s.{HttpRoutes, Request, Response}
 
@@ -30,7 +30,8 @@ class UserHttpErrorHandler[F[_]](implicit M: MonadError[F, Throwable])
     with Http4sDsl[F] {
 
   private val handler: Throwable => F[Response[F]] = {
-    case InvalidTrip(t, m) => BadRequest(s"Invalid trip: $t. Reason: $m")
+    case InvalidTrip(t, m) => BadRequest(s"Invalid trip: $t. Cause: $m")
+    case UnknownSortField(f) => BadRequest(s"Unknown sorting field: $f")
     case t => InternalServerError(s"Something bad happened: $t")
   }
 

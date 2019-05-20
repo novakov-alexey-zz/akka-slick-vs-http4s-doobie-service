@@ -20,8 +20,7 @@ class AkkaModule(cfg: Config)(implicit system: ActorSystem, ec: ExecutionContext
   val service = wire[TripService[Future]]
   val routes = concat(wire[QueryRoutes].routes, wire[CommandRoutes].routes)
 
-  def init(): Future[Either[Throwable, Unit]] =
-    repo.createSchema().failed.map(t => Left(t))
+  def init(): Future[Unit] = repo.createSchema()
 
   def close(): Unit = db.close()
 }
