@@ -10,12 +10,13 @@ import com.typesafe.config.{Config, ConfigFactory}
 import org.alexeyn.RequestsSupport._
 import org.alexeyn.TestData._
 import org.alexeyn.json.SprayJsonCodes._
-import org.scalatest.{BeforeAndAfter, Matchers, WordSpec}
+import org.scalatest.{BeforeAndAfter, DoNotDiscover, Matchers, WordSpec}
 
 import scala.collection.JavaConverters._
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
+@DoNotDiscover
 class E2ETest
     extends WordSpec
     with Matchers

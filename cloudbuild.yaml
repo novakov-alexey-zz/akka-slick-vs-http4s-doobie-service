@@ -1,0 +1,40 @@
+steps:
+  - id: 'restore cache'
+    name: 'gcr.io/$PROJECT_ID/restore_cache'
+    args:
+      - '--bucket=gs://sbt_cache'
+      - '--key=build-cache-$( checksum build.sbt )'
+    waitFor: ['-']
+
+  - id: 'check cache'
+    name: 'ubuntu'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        ls -lah /workspace/.ivy2/cache | wc -l
+    waitFor: ['restore cache']
+
+  - id: 'compile'
+    name: 'gcr.io/$PROJECT_ID/scala-sbt'
+    args: ['-ivy', '/workspace/.ivy2', 'compile', 'test']
+    waitFor: ['restore cache']
+
+  - id: 'check files again'
+    name: 'ubuntu'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        pwd
+        ls -lah
+    waitFor: ['compile']
+
+  - id: 'save cache'
+    name: 'gcr.io/$PROJECT_ID/save_cache'
+    args:
+      - --bucket=gs://sbt_cache
+      - --key=build-cache-$( checksum build.sbt )
+      - --path=/workspace/.ivy2/cache
+      - --no-clobber
+    waitFor: ['compile']
