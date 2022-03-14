@@ -1,13 +1,16 @@
 package org.alexeyn.http4s
 
+import cats.Applicative
+import cats.effect.Concurrent
 import cats.implicits._
-import cats.effect.Sync
 import org.alexeyn.json.CirceJsonCodecs
 import org.alexeyn.{CommandResult, Trip, TripService, UserError}
 import org.http4s.HttpRoutes
+import org.http4s.circe.CirceEntityDecoder._
+import org.http4s.circe.CirceEntityEncoder._
 import org.http4s.dsl.Http4sDsl
 
-class CommandRoutes[F[_]: Sync](service: TripService[F])(implicit H: HttpErrorHandler[F, UserError])
+class CommandRoutes[F[_]: Applicative: Concurrent](service: TripService[F])(implicit H: HttpErrorHandler[F, UserError])
     extends Http4sDsl[F]
     with CirceJsonCodecs {
 

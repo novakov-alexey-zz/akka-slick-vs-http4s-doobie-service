@@ -1,12 +1,11 @@
 package org.alexeyn
 
 import java.io.File
-
 import com.typesafe.config.{Config, ConfigFactory, ConfigParseOptions, ConfigRenderOptions}
 import com.typesafe.scalalogging.StrictLogging
 import pureconfig.generic.ProductHint
 import pureconfig.error.ConfigReaderFailures
-import pureconfig.{loadConfig, CamelCase, ConfigFieldMapping}
+import pureconfig.{CamelCase, ConfigFieldMapping, ConfigSource, loadConfig}
 import pureconfig.generic.auto._
 import eu.timepit.refined.W
 import eu.timepit.refined.api.Refined
@@ -52,8 +51,8 @@ object AppConfig extends StrictLogging {
 
     for {
       // validate storage config also
-      j <- loadConfig[JdbcConfig](config, "storage")
-      c <- loadConfig[Server](config, "server")
+      j <- ConfigSource.fromConfig(config).at("storage").load[JdbcConfig]
+      c <- ConfigSource.fromConfig(config).at("server").load[Server]
     } yield (c, j, config)
   }
 }

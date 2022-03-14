@@ -3,6 +3,7 @@ package org.alexeyn.data
 import cats.effect.Sync
 import doobie._
 import doobie.implicits._
+import doobie.postgres.implicits._
 import org.alexeyn.{Trip, Vehicle}
 import org.alexeyn.Vehicle.Vehicle
 import org.alexeyn.data.DoobieTripRepository._
@@ -64,7 +65,7 @@ class DoobieTripRepository[F[_]: Sync](xa: Transactor[F]) extends Repository[F] 
       .drop(page * pageSize)
       .take(pageSize)
       .compile
-      .to[Seq]
+      .to(Seq)
       .transact(xa)
 
   override def select(id: Int): F[Option[Trip]] =

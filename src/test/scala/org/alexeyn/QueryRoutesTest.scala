@@ -9,11 +9,12 @@ import org.alexeyn.TestData._
 import org.alexeyn.akkahttp.QueryRoutes
 import org.alexeyn.data.Repository
 import org.alexeyn.json.SprayJsonCodes._
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 import scala.concurrent.Future
 
-class QueryRoutesTest extends WordSpec with Matchers with ScalatestRouteTest {
+class QueryRoutesTest extends AnyWordSpec with Matchers with ScalatestRouteTest {
   val service = wire[TripService[Future]]
   val routes = wire[QueryRoutes].routes
 

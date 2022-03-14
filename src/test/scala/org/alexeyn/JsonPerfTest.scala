@@ -10,19 +10,21 @@ import org.alexeyn.akkahttp.CommandRoutes
 import org.alexeyn.data.Repository
 import org.alexeyn.json.GenericJsonWriter
 import org.scalameter._
-import org.scalatest.{DoNotDiscover, FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.DoNotDiscover
+import org.scalatest.matchers.should.Matchers
 
 import scala.concurrent.Future
 
 @DoNotDiscover
-class JsonPerfTest extends FlatSpec with ScalatestRouteTest with Matchers {
+class JsonPerfTest extends AnyFlatSpec with ScalatestRouteTest with Matchers {
 
   val standardConfig =
     config(
-      Key.exec.minWarmupRuns -> 500,
-      Key.exec.maxWarmupRuns -> 1000,
-      Key.exec.benchRuns -> 10000,
-      Key.verbose -> false
+      Key.exec.minWarmupRuns := 500,
+      Key.exec.maxWarmupRuns := 1000,
+      Key.exec.benchRuns := 10000,
+      Key.verbose := false
     ).withWarmer(new Warmer.Default)
 
   val service = wire[TripService[Future]]

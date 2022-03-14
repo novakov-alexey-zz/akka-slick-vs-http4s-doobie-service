@@ -26,10 +26,11 @@ class QueryRoutes(service: TripService[Future])(
       concat(
         pathEndOrSingleSlash {
           get {
-            parameters('sort.?, 'page.as[Int].?, 'pageSize.as[Int].?) { (sort, page, pageSize) =>
-              log.debug("Select all sorted by '{}'", sort)
-              val allTrips = service.selectAll(page, pageSize, sort)
-              complete(allTrips)
+            parameters(Symbol("sort").?, Symbol("page").as[Int].?, Symbol("pageSize").as[Int].?) {
+              (sort, page, pageSize) =>
+                log.debug("Select all sorted by '{}'", sort)
+                val allTrips = service.selectAll(page, pageSize, sort)
+                complete(allTrips)
             }
           }
         },

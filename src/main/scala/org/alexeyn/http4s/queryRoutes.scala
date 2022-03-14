@@ -1,18 +1,20 @@
 package org.alexeyn.http4s
 
-import cats.effect.Sync
+import cats.effect.Concurrent
 import cats.implicits._
 import org.alexeyn.{TripAlg, UserError}
 import org.alexeyn.json.CirceJsonCodecs
 import org.http4s.HttpRoutes
 import org.http4s.dsl.Http4sDsl
 import org.http4s.dsl.impl.OptionalQueryParamDecoderMatcher
+import cats.Applicative
+import org.http4s.circe.CirceEntityEncoder._
 
 object OptSort extends OptionalQueryParamDecoderMatcher[String]("sort")
 object OptPage extends OptionalQueryParamDecoderMatcher[Int]("page")
 object OptPageSize extends OptionalQueryParamDecoderMatcher[Int]("pageSize")
 
-class QueryRoutes[F[_]: Sync](service: TripAlg[F])(implicit H: HttpErrorHandler[F, UserError])
+class QueryRoutes[F[_]: Applicative: Concurrent](service: TripAlg[F])(implicit H: HttpErrorHandler[F, UserError])
     extends Http4sDsl[F]
     with CirceJsonCodecs {
 

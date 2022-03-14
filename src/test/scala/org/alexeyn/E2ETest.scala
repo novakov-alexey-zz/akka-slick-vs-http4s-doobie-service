@@ -1,7 +1,6 @@
 package org.alexeyn
 
 import java.time.LocalDate
-
 import akka.http.scaladsl.model.{ContentTypes, HttpRequest, StatusCodes}
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit.ScalatestRouteTest
@@ -10,21 +9,23 @@ import com.typesafe.config.{Config, ConfigFactory}
 import org.alexeyn.RequestsSupport._
 import org.alexeyn.TestData._
 import org.alexeyn.json.SprayJsonCodes._
-import org.scalatest.{BeforeAndAfter, DoNotDiscover, Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.{BeforeAndAfter, DoNotDiscover}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
 @DoNotDiscover
 class E2ETest
-    extends WordSpec
+    extends AnyWordSpec
     with Matchers
     with ScalatestRouteTest
     with BeforeAndAfter
     with ForAllTestContainer {
 
-  override val container = PostgreSQLContainer("postgres:10.4")
+  override val container =  PostgreSQLContainer("postgres:10.4")
 
   lazy val cfg: Config = ConfigFactory.load(
     ConfigFactory

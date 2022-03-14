@@ -1,6 +1,6 @@
 package org.alexeyn
 
-import cats.effect.{Async, ContextShift}
+import cats.effect.Async
 import cats.implicits._
 import com.softwaremill.macwire.wire
 import com.typesafe.scalalogging.StrictLogging
@@ -11,7 +11,7 @@ import org.http4s.HttpRoutes
 import org.http4s.implicits._
 import org.http4s.server.Router
 
-class Http4sModule[F[_]: Async: ContextShift](cfg: JdbcConfig) extends StrictLogging {
+class Http4sModule[F[_]: Async](cfg: JdbcConfig) extends StrictLogging {
 
   val xa = Transactor.fromDriverManager[F](cfg.driver.value, cfg.url.value, cfg.user.value, cfg.password.value)
   val repo = wire[DoobieTripRepository[F]]
